@@ -52,6 +52,7 @@
 
 <script>
 import StyleEditor from './StyleEditor'
+import { createGlass } from '@/api/glasses'
 
 export default {
     name: 'EditForm',
@@ -68,8 +69,29 @@ export default {
     }),
     methods: {
         lenseSubmit(){
-            this.$notify({verticalAlign: 'top', horizontalAlign: 'right', message: 'Lente creado con éxito', type: 'success'});
-            this.lenseCreationStatus = true;
+            // metodo que es llamado cuando se crea un lente
+            // sera controlado por un flag
+            createGlass(this.form)
+                .then(resp=>{
+                    console.log(resp)
+                    this.$notify({
+                        verticalAlign: 'top',
+                        horizontalAlign: 'right',
+                        message: 'Lente creado con éxito',
+                        type: 'success'
+                    });
+                    this.lenseCreationStatus = true
+                })
+                .catch(err=>{
+                    console.log(err)
+                    this.lenseCreationStatus = false
+                    this.$notify({
+                        verticalAlign: 'top',
+                        horizontalAlign: 'right',
+                        message: 'El lente no creado debido a un error',
+                        type: 'warning'
+                    });
+                })
         }
     }
 }

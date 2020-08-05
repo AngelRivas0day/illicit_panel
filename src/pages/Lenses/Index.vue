@@ -20,14 +20,30 @@
 </template>
 
 <script>
+import { getGlasses } from '@/api/glasses'
+
 export default {
     name: 'Leneses',
     data: ()=>({
-        title: 'Lenses'
+        title: 'Lenses',
+        start: 1,
+        limit: 20
     }),
+    mounted(){
+        this.getData()
+    },
     methods: {
         create(){
             this.$router.push({name: 'Create-Lense'});
+        },
+        getData(){
+            getGlasses(this.start, this.limit)
+                .then(resp=>{
+                    console.log(resp.data)
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
         }
     }
 }
