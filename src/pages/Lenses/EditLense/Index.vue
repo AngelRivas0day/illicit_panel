@@ -4,16 +4,17 @@
             <h1 class="title">Lentes</h1>
         </div>
         <div class="card-body">
-            <div class="row">
-                <div class="col-12">test</div>
-            </div>
+            <EditForm />
         </div>
     </div>
 </template>
 
 <script>
+import EditForm from './EditForm'
+
 export default {
-    name: 'EditLense'
+    name: 'EditLense',
+    components: {EditForm}
 }
 </script>
 

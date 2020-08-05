@@ -6,7 +6,7 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-12">
-                    <base-button class="animation-on-hover" type="default">
+                    <base-button @click="create()" class="animation-on-hover" type="default">
                         <i class="tim-icons icon-simple-add"></i>
                         Agregar lente
                     </base-button>
@@ -24,7 +24,12 @@ export default {
     name: 'Leneses',
     data: ()=>({
         title: 'Lenses'
-    })
+    }),
+    methods: {
+        create(){
+            this.$router.push({name: 'Create-Lense'});
+        }
+    }
 }
 </script>
 

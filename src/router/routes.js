@@ -10,6 +10,8 @@ const Icons = () => import(/* webpackChunkName: "common" */ "@/pages/Icons.vue")
 const Maps = () => import(/* webpackChunkName: "common" */ "@/pages/Maps.vue");
 const Typography = () => import(/* webpackChunkName: "common" */ "@/pages/Typography.vue");
 const TableList = () => import(/* webpackChunkName: "common" */ "@/pages/TableList.vue");
+const Lenses = () => import('@/pages/Lenses/Index.vue');
+const Lense = () => import('@/pages/Lenses/EditLense/Index.vue');
 
 const routes = [
   {
@@ -55,12 +57,17 @@ const routes = [
       {
         path: 'lentes',
         name: 'Lenses',
-        component: () => import('@/pages/Lenses/Index.vue')
+        component: Lenses
       },
       {
         path: 'lentes/edit/:id',
         name: 'Edit-Lense',
-        component: () => import('@/pages/Lenses/EditLense/Index.vue')
+        component: Lense
+      },
+      {
+        path: 'lentes/create/',
+        name: 'Create-Lense',
+        component: Lense
       }
     ]
   },
