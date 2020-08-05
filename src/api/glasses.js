@@ -4,6 +4,10 @@ const base_url = 'http://localhost:3000/'
 const resource = 'glasses'
 const request_url = `${base_url}${resource}`
 
+function toFormData(data){
+    const formData = new FormData();
+}
+
 function getGlasses(start, limit){
     const config = {
         params: {
@@ -27,4 +31,13 @@ function getGlass(id){
     return get(`${request_url}/${id}`)
 }
 
-export { createGlass, getGlasses, getGlass }
+function createGlassDesign(id,design){
+    const config = {
+        headers: {
+            'Content-Type':'application/json'
+        }
+    }
+    return post(`${request_url}/${id}/designs`, design, config)
+}
+
+export { createGlass, getGlasses, getGlass, createGlassDesign }

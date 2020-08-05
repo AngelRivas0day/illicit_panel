@@ -4,7 +4,7 @@
             <h1 class="title">Lentes</h1>
         </div>
         <div class="card-body">
-            <EditForm />
+            <EditForm :glass="glass" />
         </div>
     </div>
 </template>
@@ -27,13 +27,15 @@ export default {
         }
     },
     data: () => ({
-        itemId: null
+        itemId: null,
+        glass: null
     }),
     methods: {
         getData(){
             getGlass(this.itemId)
                 .then(resp=>{
                     console.log(resp)
+                    this.glass = resp
                 })
                 .catch(err=>{
                     console.log(err)

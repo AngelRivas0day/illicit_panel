@@ -12,7 +12,9 @@
                     </base-button>
                 </div>
                 <div class="col-12">
-                    <table></table>
+                    <md-button @click="openGlass(g.id)" :key="g.id" v-for="g in glasses">
+                        Lente con el id {{g.id}}
+                    </md-button>
                 </div>
             </div>
         </div>
@@ -27,7 +29,8 @@ export default {
     data: ()=>({
         title: 'Lenses',
         start: 1,
-        limit: 20
+        limit: 20,
+        glasses: []
     }),
     mounted(){
         this.getData()
@@ -40,10 +43,14 @@ export default {
             getGlasses(this.start, this.limit)
                 .then(resp=>{
                     console.log(resp.data)
+                    this.glasses = resp.data
                 })
                 .catch(err=>{
                     console.log(err)
                 })
+        },
+        openGlass(id){
+            this.$router.push({name: 'Edit-Lense', params: {id: id}})
         }
     }
 }
