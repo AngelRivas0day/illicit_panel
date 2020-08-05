@@ -56,6 +56,11 @@ const routes = [
         path: 'lentes',
         name: 'Lenses',
         component: () => import('@/pages/Lenses/Index.vue')
+      },
+      {
+        path: 'lentes/edit/:id',
+        name: 'Edit-Lense',
+        component: () => import('@/pages/Lenses/EditLense/Index.vue')
       }
     ]
   },
