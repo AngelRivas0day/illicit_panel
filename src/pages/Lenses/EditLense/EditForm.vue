@@ -41,23 +41,23 @@
                 </md-field>
             </div>
             <div class="col-12 text-right">
-                <md-button @click="showDesignEditor = true" :disabled="showDesignEditor" class="md-dense md-raised md-primary ml-4">Editar estilos</md-button>
+                <md-button v-if="glass" @click="showDesignEditor = !showDesignEditor" :disabled="!glass" class="md-dense md-raised md-primary ml-4">{{showDesignEditor ? 'Ocultar' : 'Ver'}} estilos</md-button>
                 <md-button type="submit" :disabled="showDesignEditor" class="md-dense md-raised md-primary">Guardar</md-button>
             </div>
         </form>
         <div v-show="showDesignEditor" class="lense-forn__styles mt-4">
-            <StyleEditor :designs="form.designs" />
+            <DesignEditor :designs="form.designs" />
         </div>
     </div>
 </template>
 
 <script>
-import StyleEditor from './StyleEditor'
+import DesignEditor from './DesignEditor'
 import { createGlass } from '@/api/glasses'
 
 export default {
     name: 'EditForm',
-    components: {StyleEditor},
+    components: {DesignEditor},
     props: {
         glass: {
             type: Object,
@@ -94,7 +94,7 @@ export default {
         }
     },
     methods: {
-        createGlass(){
+        createGlas(){
             // metodo que es llamado cuando se crea un lente
             // sera controlado por un flag
             createGlass(this.form)
@@ -126,7 +126,7 @@ export default {
         onSubmit(e){
             e.preventDefault()
             if(this.isCreating){
-                this.createGlass()
+                this.createGlas()
             }else{
                 this.updateGlass()
             }

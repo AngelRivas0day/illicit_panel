@@ -49,9 +49,9 @@
             </md-card>
 
             <div class="w-100 mt-4">
-                <md-button type="submit" class="md-dense md-raised">
+                <md-button class="md-dense md-raised">
                     <i class="tim-icons icon-check-2"></i>
-                    Guardar cambios
+                    Volver
                 </md-button>
             </div>
         </form>

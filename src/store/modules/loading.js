@@ -9,6 +9,14 @@ export default {
       SET_LOADING(state, payload) {
         state.isLoading = payload
       }
+    },
+    actions: {
+      isLoading({commit}){
+        commit('SET_LOADING', true)
+      },
+      notLoading({commit}){
+        commit('SET_LOADING', false)
+      }
     }
   }
   

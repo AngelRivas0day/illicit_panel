@@ -6,6 +6,13 @@ const request_url = `${base_url}${resource}`
 
 function toFormData(data){
     const formData = new FormData();
+    for (const key of Object.keys(data)) {
+        const value = data[key];
+        if (value != null) {
+            formData.append(key, value);
+        }
+    }
+    return formData;
 }
 
 function getGlasses(start, limit){

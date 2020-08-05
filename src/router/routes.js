@@ -7,11 +7,9 @@ const Dashboard = () => import(/* webpackChunkName: "dashboard" */"@/pages/Dashb
 const Profile = () => import(/* webpackChunkName: "common" */ "@/pages/Profile.vue");
 const Notifications = () => import(/* webpackChunkName: "common" */"@/pages/Notifications.vue");
 const Icons = () => import(/* webpackChunkName: "common" */ "@/pages/Icons.vue");
-const Maps = () => import(/* webpackChunkName: "common" */ "@/pages/Maps.vue");
-const Typography = () => import(/* webpackChunkName: "common" */ "@/pages/Typography.vue");
-const TableList = () => import(/* webpackChunkName: "common" */ "@/pages/TableList.vue");
 const Lenses = () => import('@/pages/Lenses/Index.vue');
 const Lense = () => import('@/pages/Lenses/EditLense/Index.vue');
+const Login = () => import('@/pages/Auth/Index.vue')
 
 const routes = [
   {
@@ -40,21 +38,6 @@ const routes = [
         component: Icons
       },
       {
-        path: "maps",
-        name: "maps",
-        component: Maps
-      },
-      {
-        path: "typography",
-        name: "typography",
-        component: Typography
-      },
-      {
-        path: "table-list",
-        name: "table-list",
-        component: TableList
-      },
-      {
         path: 'lentes',
         name: 'Lenses',
         component: Lenses
@@ -70,6 +53,11 @@ const routes = [
         component: Lense
       }
     ]
+  },
+  {
+    path: '/auth',
+    name: 'Auth',
+    component: Login
   },
   { path: "*", component: NotFound },
 ];

@@ -12,6 +12,7 @@
 <script>
 import EditForm from './EditForm'
 import { getGlass } from '@/api/glasses'
+import store from '@/store'
 
 export default {
     name: 'EditLense',
@@ -32,6 +33,7 @@ export default {
     }),
     methods: {
         getData(){
+            store.dispatch('loading/isLoading',null,{root:true})
             getGlass(this.itemId)
                 .then(resp=>{
                     console.log(resp)
@@ -39,6 +41,9 @@ export default {
                 })
                 .catch(err=>{
                     console.log(err)
+                })
+                .finally(()=>{
+                    store.dispatch('loading/notLoading',null,{root:true})
                 })
         }
     }

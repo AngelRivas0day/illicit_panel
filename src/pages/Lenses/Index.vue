@@ -23,6 +23,7 @@
 
 <script>
 import { getGlasses } from '@/api/glasses'
+import store from '@/store'
 
 export default {
     name: 'Leneses',
@@ -40,13 +41,17 @@ export default {
             this.$router.push({name: 'Create-Lense'});
         },
         getData(){
+            store.dispatch('loading/isLoading',null,{root:true})
             getGlasses(this.start, this.limit)
                 .then(resp=>{
-                    console.log(resp.data)
+                    console.log(resp)
                     this.glasses = resp.data
                 })
                 .catch(err=>{
                     console.log(err)
+                })
+                .finally(()=>{
+                    store.dispatch('loading/notLoading',null,{root:true})
                 })
         },
         openGlass(id){
