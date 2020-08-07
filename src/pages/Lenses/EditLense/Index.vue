@@ -4,7 +4,8 @@
             <h1 class="title">Lentes</h1>
         </div>
         <div class="card-body">
-            <EditForm :glass="glass" />
+            <EditForm />
+            <!-- La info le llega al  componente por Vuex -->
         </div>
     </div>
 </template>
@@ -13,6 +14,7 @@
 import EditForm from './EditForm'
 import { getGlass } from '@/api/glasses'
 import store from '@/store'
+import { mapState } from 'vuex'
 
 export default {
     name: 'EditLense',
@@ -27,20 +29,23 @@ export default {
             this.getData()
         }
     },
+    computed: {
+        ...mapState('editor',{
+            glass: 'glass'
+        })
+    },
     data: () => ({
         itemId: null,
-        glass: null
     }),
     methods: {
         getData(){
             store.dispatch('loading/isLoading',null,{root:true})
-            getGlass(this.itemId)
+            store.dispatch('editor/getGlass', this.itemId, {root:true})
                 .then(resp=>{
-                    console.log(resp)
-                    this.glass = resp
+                    console.log("Lente desde vuex: ",resp)
                 })
                 .catch(err=>{
-                    console.log(err)
+                    console.log("Error desde vuex: ", err)
                 })
                 .finally(()=>{
                     store.dispatch('loading/notLoading',null,{root:true})

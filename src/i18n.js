@@ -3,6 +3,12 @@ import VueI18n from 'vue-i18n'
 
 Vue.use(VueI18n)
 
+// set language to EN
+import lang from 'element-ui/lib/locale/lang/en'
+import locale from 'element-ui/lib/locale'
+
+locale.use(lang)
+
 function loadLocaleMessages () {
   const locales = require.context('./locales', true, /[A-Za-z0-9-_,\s]+\.json$/i)
   const messages = {}

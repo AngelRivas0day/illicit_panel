@@ -12,9 +12,24 @@
                     </base-button>
                 </div>
                 <div class="col-12">
-                    <md-button @click="openGlass(g.id)" :key="g.id" v-for="g in glasses">
-                        Lente con el id {{g.id}}
-                    </md-button>
+                    <el-input v-model="filters[0].value"></el-input>
+                </div>
+                <div class="col-12 mt-4">
+                    <data-tables-server :filters="filters" :data="glasses" :total="total" :loading="loading" :pagination-props="{ pageSizes: [5, 10, 15] }">
+                        <el-table-column label="Actions" min-width="100px">
+                            <template slot-scope="scope">
+                                <img :src="scope.row.designs.length > 0 ? scope.row.designs[0].image : 'https://source.unsplash.com/40x40'" alt="">
+                            </template>
+                        </el-table-column>
+                        <el-table-column :key="t.prop" v-for="t in titles" :prop="t.prop" :label="t.label">
+                        </el-table-column>
+                        <el-table-column label="Actions" min-width="100px">
+                            <template slot-scope="scope">
+                                <md-button @click="openGlass(scope.row.id)" class="md-primary md-raised">Editar</md-button>
+                                <md-button @click="openGlass(scope.row.id)" class="md-accent md-raised">Eliminar</md-button>
+                            </template>
+                        </el-table-column>
+                    </data-tables-server>
                 </div>
             </div>
         </div>
@@ -24,14 +39,37 @@
 <script>
 import { getGlasses } from '@/api/glasses'
 import store from '@/store'
+import { mapState } from 'vuex'
 
 export default {
     name: 'Leneses',
+    computed:{
+        total(){
+            return this.glasses.length
+        },
+        ...mapState('editor',{
+            loading: 'isLoading'
+        })
+    },
     data: ()=>({
         title: 'Lenses',
         start: 1,
         limit: 20,
-        glasses: []
+        glasses: [],
+        titles: [
+            {
+                prop: "name",
+                label: "Nombre modelo"
+            }, 
+            {
+                prop: "description",
+                label: "Desc."
+            }
+        ],
+        filters: [{
+            value: '',
+            'search_prop': 'name' // define search_prop for backend usage.
+        }]
     }),
     mounted(){
         this.getData()

@@ -1,19 +1,8 @@
-import { get, post } from 'axios'
+import { get, post, patch, delete as axiosDelete } from 'axios'
 
 const base_url = 'http://localhost:3000/'
 const resource = 'glasses'
 const request_url = `${base_url}${resource}`
-
-function toFormData(data){
-    const formData = new FormData();
-    for (const key of Object.keys(data)) {
-        const value = data[key];
-        if (value != null) {
-            formData.append(key, value);
-        }
-    }
-    return formData;
-}
 
 function getGlasses(start, limit){
     const config = {
@@ -35,6 +24,26 @@ function createGlass(glass){
     return post(request_url, glass, config)
 }
 
+function updateGlass(id, glass){
+    const config = {
+        headers: {
+            'Content-Type':'application/json',
+            'Authorization':`Bearer ${localStorage.getItem('token')}`,
+        }
+    }
+    return patch(`${request_url}/${id}`, glass, config)
+}
+
+function deleteGlass(id){
+    const config = {
+        headers: {
+            'Content-Type':'application/json',
+            'Authorization':`Bearer ${localStorage.getItem('token')}`
+        }
+    }
+    return axiosDelete(`${request_url}/${id}`, config)
+}
+
 function getGlass(id){
     return get(`${request_url}/${id}`)
 }
@@ -49,4 +58,11 @@ function createGlassDesign(id,design){
     return post(`${request_url}/${id}/designs`, design, config)
 }
 
-export { createGlass, getGlasses, getGlass, createGlassDesign }
+export {
+    createGlass,
+    getGlasses,
+    getGlass,
+    createGlassDesign,
+    updateGlass,
+    deleteGlass
+}

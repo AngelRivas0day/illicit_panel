@@ -1,5 +1,5 @@
 <template>
-    <div class="lense-form">
+    <div v-if="glass" class="lense-form">
         <form @submit="onSubmit" class="row">
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <md-field>
@@ -46,7 +46,8 @@
             </div>
         </form>
         <div v-show="showDesignEditor" class="lense-forn__styles mt-4">
-            <DesignEditor :designs="form.designs" />
+            <!-- Los designs le van a llegar al componente por vuex -->
+            <DesignEditor />
         </div>
     </div>
 </template>
@@ -54,28 +55,27 @@
 <script>
 import DesignEditor from './DesignEditor'
 import { createGlass } from '@/api/glasses'
+import store from '@/store'
+import { mapState } from 'vuex'
 
 export default {
     name: 'EditForm',
     components: {DesignEditor},
-    props: {
-        glass: {
-            type: Object,
-            default: () => {},
-            required: false
-        }
+    computed: {
+        ...mapState('editor',{
+            glass: 'glass'
+        })
     },
     mounted(){
-        if(this.glass){
-            console.log("Hay un lente: ", this.glass.data.designs)
-            this.form = this.glass.data
+        if(this.$route.params.id){
+            this.form = this.glass
             this.isCreating = false
         }else{
-            console.log("No hay un lente")
             this.isCreating = true
         }
     },
     data: ()=>({
+        glassId: null,
         form: {
             name: '',
             description: '',
@@ -87,17 +87,18 @@ export default {
         showDesignEditor: false,
         isCreating: false
     }),
-    watch: {
+    watch:{
         glass(){
-            this.form = this.glass.data
-            this.isCreating = false
+            if(this.$route.params.id)
+                this.form = this.glass
         }
     },
     methods: {
         createGlas(){
             // metodo que es llamado cuando se crea un lente
             // sera controlado por un flag
-            createGlass(this.form)
+
+            store.dispatch('editor/createGlass',this.form, {root:true})
                 .then(resp=>{
                     console.log(resp)
                     this.$notify({

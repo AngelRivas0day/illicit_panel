@@ -1,12 +1,12 @@
 <template>
     <div class="style-editor">
-        <form class="form">
+        <form @submit="addStyle" class="form">
             <md-card class="mb-4">
                 <md-card-header>
                     <div class="md-title">Editor de estilos</div>
                 </md-card-header>
                     <md-card-content>
-                    <form @submit="onSubmit()" class="row">
+                    <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <md-field>
                                 <label>Nombre del estilo</label>
@@ -27,10 +27,10 @@
                                 <img :src="i" alt="">
                             </div> 
                         </template>
-                    </form>
+                    </div>
                 </md-card-content>
                 <md-card-actions>
-                    <md-button @click="addStyle" class="md-dense md-raised md-primary">
+                    <md-button type="submit" class="md-dense md-raised md-primary">
                         <i class="tim-icons icon-simple-add"></i>
                         Agregar estilo
                     </md-button>
@@ -59,30 +59,31 @@
 </template>
 
 <script>
+import { createGlassDesign } from '@/api/glasses'
 import DesignCard from './DesignCard'
+import { mapState } from 'vuex'
+import store from '@/store'
 
 export default {
     name: 'StyleEditor',
     components: {DesignCard},
-    props: {
-        designs: {
-            type: Array,
-            default: () => [],
-            required: false
+    computed: {
+        ...mapState('editor',{
+            designs: 'designs',
+            glass: 'glass'
+        }),
+        glassId(){
+            return this.glass.id
         }
     },
     updated(){
-        if(this.designs){
-            console.log("Editando estilos")
-            console.log("Diseños del lente: ", this.designs)
+        if(this.$route.params.id)
             this.lenseStyles = this.designs
-        }else{
-            console.log("Creando estilos")
-        }
     },
     watch: {
         designs(){
-            this.lenseStyles = this.designs
+            if(this.$route.params.id)
+                this.lenseStyles = this.designs
         }
     },
     data: () => ({
@@ -94,11 +95,25 @@ export default {
             },
             images: [],
         },
-        urlPreviews: []
+        urlPreviews: [],
+        selectedFiles: []
     }),
     methods: {
-        addStyle(){
-            console.log(this.styleData.images)
+        addStyle(e){
+            e.preventDefault()
+            const formData = new FormData()
+            formData.append('color', this.styleData.color.name)
+            formData.append('hex', this.styleData.color.hex.hex)
+            Array.from(this.selectedFiles).forEach((element,i) => {
+                formData.append("images", element)
+            });
+            createGlassDesign(this.glassId, formData)
+                .then(resp=>{
+                    console.log(resp)
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
             this.styleData = {
                 color: {
                     name: '',
@@ -109,14 +124,15 @@ export default {
             this.urlPreviews = []
         },
         deleteStyle(){
-            this.lenseStyles.pop()
+            // this.lenseStyles.pop()
         },
         onSubmit(){
             console.log(this.lenseStyles)
         },
         onFileChange(e){
-            const files = e.target.files;
-            Array.from(files).forEach((element,i) => {
+            this.selectedFiles = e.target.files
+            console.log("Selected Files: ",this.selectedFiles)
+            Array.from(this.selectedFiles).forEach((element,i) => {
                 this.urlPreviews.push(URL.createObjectURL(element))
             });
         }
