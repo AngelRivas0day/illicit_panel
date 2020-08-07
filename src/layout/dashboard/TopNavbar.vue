@@ -13,7 +13,7 @@
             <span class="navbar-toggler-bar bar3"></span>
           </button>
         </div>
-        <a class="navbar-brand" href="#pablo">{{routeName}}</a>
+        <a class="navbar-brand">{{routeName}}</a>
       </div>
       <button class="navbar-toggler" type="button"
               @click="toggleMenu"
@@ -44,14 +44,11 @@
                 </p>
               </a>
               <li class="nav-link">
-                <a href="#" class="nav-item dropdown-item">Profile</a>
-              </li>
-              <li class="nav-link">
-                <a href="#" class="nav-item dropdown-item">Settings</a>
+                <router-link to="" class="nav-item dropdown-item">Perfil</router-link>
               </li>
               <div class="dropdown-divider"></div>
               <li class="nav-link">
-                <a href="#" class="nav-item dropdown-item">Log out</a>
+                <a @click="logout" class="nav-item dropdown-item">Log out</a>
               </li>
             </base-dropdown>
           </ul>
@@ -61,52 +58,75 @@
   </nav>
 </template>
 <script>
-  import { CollapseTransition } from 'vue2-transitions';
-  import Modal from '@/components/Modal';
+import { CollapseTransition } from 'vue2-transitions';
+import Modal from '@/components/Modal';
+import store from '@/store'
 
-  export default {
+export default {
     components: {
-      CollapseTransition,
-      Modal
+      	CollapseTransition,
+      	Modal
     },
     computed: {
-      routeName() {
-        const { name } = this.$route;
-        return this.capitalizeFirstLetter(name);
-      },
-      isRTL() {
-        return this.$rtl.isRTL;
-      }
+      	routeName() {
+        	const { name } = this.$route;
+        	return this.capitalizeFirstLetter(name);
+      	},
+      	isRTL() {
+        	return this.$rtl.isRTL;
+      	}
     },
     data() {
-      return {
-        activeNotifications: false,
-        showMenu: false,
-        searchModalVisible: false,
-        searchQuery: ''
-      };
+      	return {
+        	activeNotifications: false,
+        	showMenu: false,
+        	searchModalVisible: false,
+        	searchQuery: ''
+      	};
     },
     methods: {
-      capitalizeFirstLetter(string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-      },
-      toggleNotificationDropDown() {
-        this.activeNotifications = !this.activeNotifications;
-      },
-      closeDropDown() {
-        this.activeNotifications = false;
-      },
-      toggleSidebar() {
-        this.$sidebar.displaySidebar(!this.$sidebar.showSidebar);
-      },
-      hideSidebar() {
-        this.$sidebar.displaySidebar(false);
-      },
-      toggleMenu() {
-        this.showMenu = !this.showMenu;
-      }
+		capitalizeFirstLetter(string) {
+			return string.charAt(0).toUpperCase() + string.slice(1);
+		},
+		toggleNotificationDropDown() {
+			this.activeNotifications = !this.activeNotifications;
+		},
+		closeDropDown() {
+			this.activeNotifications = false;
+		},
+		toggleSidebar() {
+			this.$sidebar.displaySidebar(!this.$sidebar.showSidebar);
+		},
+		hideSidebar() {
+			this.$sidebar.displaySidebar(false);
+		},
+		toggleMenu() {
+			this.showMenu = !this.showMenu;
+		},
+		logout(e){
+			e.preventDefault()
+			store.dispatch('oauth/logout', localStorage.getItem('token'), {root:true})
+				.then(resp=>{
+					console.log('token destruido')
+					this.$router.push({name: 'Login'})
+				})
+				.catch(err=>{
+					console.log("Hubo un error al destruir el token: ", localStorage.getItem('token'))
+					this.$router.push({name: 'Login'})
+				})
+		}
     }
   };
 </script>
-<style>
+<style lang="scss" scoped>
+.nav-link{
+	cursor: pointer;
+	&:hover .nav-item{
+		text-decoration: underline;
+	}
+	.nav-item{
+		color: #333 !important;
+		background: transparent !important;
+	}
+}
 </style>

@@ -1,4 +1,5 @@
 import DashboardLayout from "@/layout/dashboard/DashboardLayout.vue";
+import Auth from '@/pages/Auth/Index.vue'
 // GeneralViews
 import NotFound from "@/pages/NotFoundPage.vue";
 
@@ -9,13 +10,16 @@ const Notifications = () => import(/* webpackChunkName: "common" */"@/pages/Noti
 const Icons = () => import(/* webpackChunkName: "common" */ "@/pages/Icons.vue");
 const Lenses = () => import('@/pages/Lenses/Index.vue');
 const Lense = () => import('@/pages/Lenses/EditLense/Index.vue');
-const Login = () => import('@/pages/Auth/Index.vue')
+const Login = () => import('@/pages/Auth/Login/Index.vue')
 
 const routes = [
   {
     path: "/",
     component: DashboardLayout,
     redirect: "/dashboard",
+    meta: {
+      requiresAuth: true
+    },
     children: [
       {
         path: "dashboard",
@@ -57,7 +61,15 @@ const routes = [
   {
     path: '/auth',
     name: 'Auth',
-    component: Login
+    redirect: '/auth/login',
+    component: Auth,
+    children: [
+      {
+        path: '/auth/login',
+        name: 'Login',
+        component: Login
+      }
+    ]
   },
   { path: "*", component: NotFound },
 ];

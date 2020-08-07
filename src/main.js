@@ -29,6 +29,18 @@ Vue.use(BlackDashboard);
 Vue.use(VueRouter);
 Vue.use(RouterPrefetch);
 
+router.beforeEach((to, from, next)=>{
+  if(to.matched.some(record=>record.meta.requiresAuth)){
+    if(store.getters['oauth/isLoggedIn']){
+      next()
+      return 
+    }
+    next('/auth')
+  }else{
+    next()
+  }
+});
+
 /* eslint-disable no-new */
 new Vue({
   router,

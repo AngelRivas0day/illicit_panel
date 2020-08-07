@@ -28,7 +28,8 @@ function getGlasses(start, limit){
 function createGlass(glass){
     const config = {
         headers: {
-            'Content-Type':'application/json'
+            'Content-Type':'application/json',
+            'Authorization':`Bearer ${localStorage.getItem('token')}`,
         }
     }
     return post(request_url, glass, config)
@@ -41,7 +42,8 @@ function getGlass(id){
 function createGlassDesign(id,design){
     const config = {
         headers: {
-            'Content-Type':'application/json'
+            'Content-Type':'application/json',
+            'Authorization':`Bearer ${localStorage.getItem('token')}`
         }
     }
     return post(`${request_url}/${id}/designs`, design, config)
