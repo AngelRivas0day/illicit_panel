@@ -36,7 +36,7 @@
                             </el-table-column>
                             <el-table-column label="Diseños disponibles" min-width="100px">
                                 <template slot-scope="scope">
-                                    <span>{{ (scope.row.designs).length }}</span>
+                                    <div class="text-center w-100">{{ (scope.row.designs).length }}</div>
                                 </template>
                             </el-table-column>
                             <el-table-column label="Actions" min-width="100px">
@@ -123,6 +123,12 @@ export default {
                 })
                 .catch(err=>{
                     console.log(err)
+                    this.$notify({
+                        verticalAlign: 'top',
+                        horizontalAlign: 'right',
+                        message: 'El lente no ha sido eliminado debido a un error',
+                        type: 'warning'
+                    });
                 })
         },
         attemptDelete(glass){
@@ -133,7 +139,7 @@ export default {
             this.$notify({
                 verticalAlign: 'top',
                 horizontalAlign: 'right',
-                message: 'El lente no ha sido eliminado',
+                message: 'El lente no ha sido eliminado por acción del usuario',
                 type: 'warning'
             });
         }
