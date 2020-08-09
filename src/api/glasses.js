@@ -27,7 +27,7 @@ function createGlass(glass){
 function updateGlass(id, glass){
     const config = {
         headers: {
-            'Content-Type':'application/json',
+            'Content-Type':'application/x-www-form-urlencoded',
             'Authorization':`Bearer ${localStorage.getItem('token')}`,
         }
     }
@@ -58,11 +58,21 @@ function createGlassDesign(id,design){
     return post(`${request_url}/${id}/designs`, design, config)
 }
 
+function deleteGlassDesign(glassId, designName){
+    const config = {
+        headers: {
+            'Authorization':`Bearer ${localStorage.getItem('token')}`
+        }
+    }
+    return axiosDelete(`${request_url}/${glassId}/designs/${designName}`, config)
+}
+
 export {
     createGlass,
     getGlasses,
     getGlass,
     createGlassDesign,
     updateGlass,
-    deleteGlass
+    deleteGlass,
+    deleteGlassDesign
 }

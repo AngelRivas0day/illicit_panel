@@ -1,5 +1,6 @@
 // store/modules/editor.js
 import * as api from '@/api/glasses'
+import store from '@/store'
 
 export default {
     namespaced: true,
@@ -7,7 +8,9 @@ export default {
         success: false,
         isLoading: false,
         glass: {},
-        designs: []
+        designs: [],
+        start: 0,
+        limit: 20
     },
     mutations: {
       SET_GLASS(state, payload) {
@@ -32,6 +35,7 @@ export default {
                         resolve(resp.data)
                     })
                     .catch(err=>{
+                        commit('SET_ERROR', false)
                         reject(err)
                     })
                     .finally(()=>{
@@ -39,10 +43,10 @@ export default {
                     })
             })
         },
-        updateGlass({commit}, id, glass){
+        updateGlass({commit, state}, glass){
             return new Promise((resolve, reject)=>{
                 commit('SET_LOADING', true)
-                api.updateGlass(id, glass)
+                api.updateGlass(state.glass.id, glass)
                     .then(resp=>{
                         console.log(resp)
                         resolve(resp)
@@ -54,6 +58,7 @@ export default {
                     })
                     .finally(()=>{
                         commit('SET_LOADING', false)
+                        store.dispatch('editor/getGlass', state.glass.id, {root:true})
                     })
             })
         },
@@ -73,10 +78,52 @@ export default {
             })
         },
         deleteGlass({commit}, id){
-
+            return new Promise((resolve, reject)=>{
+                commit('SET_LOADING', true)
+                api.deleteGlass(id)
+                    .then(resp=>{
+                        resolve(resp)
+                    })
+                    .catch(err=>{
+                        reject(err)
+                    })
+                    .finally(()=>{
+                        commit('SET_LOADING', false)
+                    })
+            })
         },
-        deleteDesign({commit}, id){
-
+        deleteGlassDesign({commit, state},{name}){
+            console.log("Vuex name: ", name)
+            return new Promise((resolve, reject)=>{
+                commit('SET_LOADING', true)
+                api.deleteGlassDesign(state.glass.id , name)
+                    .then(resp=>{
+                        resolve(resp)
+                    })
+                    .catch(err=>{
+                        reject(err)
+                    })
+                    .finally(()=>{
+                        commit('SET_LOADING', false)
+                        store.dispatch('editor/getGlass', state.glass.id, {root:true})
+                    })
+            })
+        },
+        createGlassDesign({commit, state}, data){
+            return new Promise((resolve, reject)=>{
+                commit('SET_LOADING', true)
+                api.createGlassDesign(state.glass.id, data)
+                .then(resp=>{
+                    console.log(resp)
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+                .finally(()=>{
+                    commit('SET_LOADING', false)
+                    store.dispatch('editor/getGlass', state.glass.id, {root:true})
+                })
+            })
         }
     }
   }

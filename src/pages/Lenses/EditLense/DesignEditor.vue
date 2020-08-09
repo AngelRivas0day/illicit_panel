@@ -9,22 +9,39 @@
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <md-field>
-                                <label>Nombre del estilo</label>
-                                <md-input v-model="styleData.color.name"></md-input>
+                                <label>Nombre del dise&ntilde;o</label>
+                                <md-input v-model="styleData.name"></md-input>
                             </md-field>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-6 text-center">
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <md-field>
+                                <label>Nombre del color</label>
+                                <md-input v-model="styleData.color.colorName"></md-input>
+                            </md-field>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 offset-md-6 col-md-6 text-center">
                             <chrome-picker class="mx-auto my-0" v-model="styleData.color.hex" />
                         </div>
                         <div class="col-12">
                             <md-field>
-                                <label>3 Imagenes para el estilo color: {{styleData.color.name}}</label>
+                                <label>3 Imagenes para el dise&ntilde;o: {{styleData.name}}</label>
                                 <md-file @change="onFileChange" v-model="styleData.images" accept="image/*" multiple/>
                             </md-field>
                         </div>
                         <template v-if="styleData.images">
                             <div v-for="i in urlPreviews" :key="i" class="col-xs-12 col-sm-6 col-md-4">
                                 <img :src="i" alt="">
+                            </div> 
+                        </template>
+                        <div class="col-12">
+                            <md-field>
+                                <label>Imagen principal del dise&ntilde;o: {{styleData.name}}</label>
+                                <md-file @change="onFileChangeMain" v-model="styleData.mainImage" accept="image/*"/>
+                            </md-field>
+                        </div>
+                        <template v-if="styleData.mainImage">
+                            <div v-for="standAloneImage in urlPreview" :key="standAloneImage" class="col-xs-12 col-sm-6 col-md-4">
+                                <img :src="standAloneImage" alt="">
                             </div> 
                         </template>
                     </div>
@@ -42,15 +59,15 @@
                     <div class="md-title">Estilos del lente</div>
                 </md-card-header>
                 <md-card-content>
-                    <div class="mb-5" v-for="s in lenseStyles" :key="s.color.name">
+                    <div class="mb-5" v-for="s in lenseStyles" :key="s.name">
                         <DesignCard :design="s" />
                     </div>
                 </md-card-content>
             </md-card>
 
-            <div class="w-100 mt-4">
-                <md-button class="md-dense md-raised">
-                    <i class="tim-icons icon-check-2"></i>
+            <div class="w-100 mt-4 text-right">
+                <md-button to="/lentes" class="md-dense md-primary md-raised">
+                    <i class="tim-icons icon-minimal-left"></i>
                     Volver
                 </md-button>
             </div>
@@ -59,7 +76,6 @@
 </template>
 
 <script>
-import { createGlassDesign } from '@/api/glasses'
 import DesignCard from './DesignCard'
 import { mapState } from 'vuex'
 import store from '@/store'
@@ -69,12 +85,8 @@ export default {
     components: {DesignCard},
     computed: {
         ...mapState('editor',{
-            designs: 'designs',
-            glass: 'glass'
-        }),
-        glassId(){
-            return this.glass.id
-        }
+            designs: 'designs'
+        })
     },
     updated(){
         if(this.$route.params.id)
@@ -90,24 +102,32 @@ export default {
         lenseStyles: [],
         styleData: {
             color: {
-                name: '',
+                colorName: '',
                 hex: ''
             },
             images: [],
+            mainImage: [],
+            name: ''
         },
         urlPreviews: [],
-        selectedFiles: []
+        selectedFiles: [],
+        selectedFile: [],
+        urlPreview: []
     }),
     methods: {
         addStyle(e){
             e.preventDefault()
             const formData = new FormData()
-            formData.append('color', this.styleData.color.name)
+            formData.append('colorName', this.styleData.color.colorName)
+            formData.append('name', this.styleData.name)
             formData.append('hex', this.styleData.color.hex.hex)
             Array.from(this.selectedFiles).forEach((element,i) => {
                 formData.append("images", element)
             });
-            createGlassDesign(this.glassId, formData)
+            Array.from(this.selectedFile).forEach((element,i) => {
+                formData.append("mainImage", element)
+            });
+            store.dispatch('editor/createGlassDesign', formData, {root:true})
                 .then(resp=>{
                     console.log(resp)
                 })
@@ -123,17 +143,17 @@ export default {
             }
             this.urlPreviews = []
         },
-        deleteStyle(){
-            // this.lenseStyles.pop()
-        },
-        onSubmit(){
-            console.log(this.lenseStyles)
-        },
         onFileChange(e){
             this.selectedFiles = e.target.files
-            console.log("Selected Files: ",this.selectedFiles)
             Array.from(this.selectedFiles).forEach((element,i) => {
                 this.urlPreviews.push(URL.createObjectURL(element))
+            });
+        },
+        onFileChangeMain(e){
+            this.selectedFile = e.target.files
+            console.log(this.selectedFile)
+            Array.from(this.selectedFile).forEach((element,i) => {
+                this.urlPreview.push(URL.createObjectURL(element))
             });
         }
     }

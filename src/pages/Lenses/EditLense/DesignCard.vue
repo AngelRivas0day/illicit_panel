@@ -2,11 +2,17 @@
     <div class="design-card row">
         <div class="col-xs-12 col-sm-12 col-md-6">
             <md-field>
-                <label>Nombre del estilo</label>
-                <md-input disabled v-model="design.color.name"></md-input>
+                <label>Nombre del dise&ntilde;o</label>
+                <md-input disabled v-model="design.name"></md-input>
             </md-field>
         </div>
-        <div class="col-xs-12 col-sm-12 col-md-6 text-left">
+        <div class="col-xs-12 col-sm-12 col-md-6">
+            <md-field>
+                <label>Nombre del color</label>
+                <md-input disabled v-model="design.color.colorName"></md-input>
+            </md-field>
+        </div>
+        <div class="col-12">
             <div class="color-sample" :style="'background-color:' + design.color.hex + ';'" >
                 <span>{{ design.color.hex }}</span>
             </div>
@@ -15,7 +21,7 @@
             <img :src="url" alt="" />
         </div>
         <div class="col-12 text-right">
-            <md-button @click="deleteDesign(design.color.name)" class="md-dense md-raised md-accent mx-0 mt-3">
+            <md-button @click="deleteDesign" :disabled="isLoading" class="md-dense md-raised md-accent mx-0 mt-3">
                 Eliminar estilo
             </md-button>
         </div>
@@ -23,19 +29,34 @@
 </template>
 
 <script>
+import store from '@/store'
+import {mapState} from 'vuex'
+
 export default {
-  name: "DesignCard",
-  props: {
-    design: {
-      type: Object,
-      required: true
+    name: "DesignCard",
+    props: {
+        design: {
+            type: Object,
+            required: true
+        }
+    },
+    computed: {
+        ...mapState('editor',{
+            isLoading: 'isLoading'
+        })
+    },
+    methods: {
+        deleteDesign() {
+            console.log(this.design.name)
+            store.dispatch('editor/deleteGlassDesign', {name: this.design.name}, {root:true})
+                .then(resp=>{
+                    console.log("Se elimino el disenio con exito: ", resp)
+                })
+                .catch(err=>{
+                    console.log("Hubo un error", err)
+                })
+        }
     }
-  },
-  methods: {
-    deleteDesign(id) {
-      console.log("deleted design with id: ", id);
-    }
-  }
 };
 </script>
 
@@ -52,8 +73,7 @@ export default {
         align-items: center;
         margin-bottom: 15px;
         @media #{$break-medium}{
-            height: 70%;
-            margin-bottom: 0px;
+            margin-bottom: 20px;
         }
         span{
             color: white;

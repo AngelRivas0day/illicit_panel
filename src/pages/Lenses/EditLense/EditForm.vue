@@ -41,7 +41,7 @@
                 </md-field>
             </div>
             <div class="col-12 text-right">
-                <md-button v-if="glass" @click="showDesignEditor = !showDesignEditor" :disabled="!glass" class="md-dense md-raised md-primary ml-4">{{showDesignEditor ? 'Ocultar' : 'Ver'}} estilos</md-button>
+                <md-button v-if="glass && !isCreating" @click="showDesignEditor = !showDesignEditor" :disabled="!glass" class="md-dense md-raised md-primary ml-4">{{showDesignEditor ? 'Ocultar' : 'Ver'}} estilos</md-button>
                 <md-button type="submit" :disabled="showDesignEditor" class="md-dense md-raised md-primary">Guardar</md-button>
             </div>
         </form>
@@ -81,8 +81,7 @@ export default {
             description: '',
             price: 0,
             categories: [],
-            brands: [],
-            designs: []
+            brands: []
         },
         showDesignEditor: false,
         isCreating: false
@@ -91,6 +90,7 @@ export default {
         glass(){
             if(this.$route.params.id)
                 this.form = this.glass
+                this.isCreating = false
         }
     },
     methods: {
@@ -115,14 +115,35 @@ export default {
                     this.$notify({
                         verticalAlign: 'top',
                         horizontalAlign: 'right',
-                        message: 'El lente no creado debido a un error',
+                        message: 'El lente no ha sido creado debido a un error',
                         type: 'warning'
                     });
                 })
         },
         updateGlass(){
             console.log(this.form)
-            this.showDesignEditor = true
+            store.dispatch('editor/updateGlass', this.form, {root:true})
+                .then(resp=>{
+                    console.log(resp)
+                    this.$notify({
+                        verticalAlign: 'top',
+                        horizontalAlign: 'right',
+                        message: 'Lente actualizado con éxito',
+                        type: 'success'
+                    });
+                })
+                .catch(err=>{
+                    console.log(err)
+                    this.$notify({
+                        verticalAlign: 'top',
+                        horizontalAlign: 'right',
+                        message: 'El lente no se ha actualizado debido a un error',
+                        type: 'warning'
+                    });
+                })  
+                .finally(()=>{
+                    this.showDesignEditor = true
+                })
         },
         onSubmit(e){
             e.preventDefault()

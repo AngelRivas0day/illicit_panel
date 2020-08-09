@@ -6,19 +6,19 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-12">
-                    <base-button @click="create()" class="animation-on-hover" type="default">
+                    <md-button @click="create()" class="md-primary md-raised md-dense" type="default">
                         <i class="tim-icons icon-simple-add"></i>
                         Agregar lente
-                    </base-button>
+                    </md-button>
                 </div>
-                <div class="col-12">
+                <!-- <div class="col-12">
                     <el-input v-model="filters[0].value"></el-input>
-                </div>
+                </div> -->
                 <div class="col-12 mt-4">
-                    <data-tables-server :filters="filters" :data="glasses" :total="total" :loading="loading" :pagination-props="{ pageSizes: [5, 10, 15] }">
-                        <el-table-column label="Actions" min-width="100px">
+                    <data-tables-server :filters="filters" :data="glasses" :total="total" :pagination-props="{ pageSizes: [5, 10, 15] }">
+                        <el-table-column label="Imagen" min-width="100px">
                             <template slot-scope="scope">
-                                <img :src="scope.row.designs.length > 0 ? scope.row.designs[0].image : 'https://source.unsplash.com/40x40'" alt="">
+                                <img :src="scope.row.designs.length > 0 ? scope.row.designs[0].image : 'https://source.unsplash.com/200x200?empty,nothing'" class="table-image">
                             </template>
                         </el-table-column>
                         <el-table-column :key="t.prop" v-for="t in titles" :prop="t.prop" :label="t.label">
@@ -26,7 +26,7 @@
                         <el-table-column label="Actions" min-width="100px">
                             <template slot-scope="scope">
                                 <md-button @click="openGlass(scope.row.id)" class="md-primary md-raised">Editar</md-button>
-                                <md-button @click="openGlass(scope.row.id)" class="md-accent md-raised">Eliminar</md-button>
+                                <md-button @click="deleteGlass(scope.row.id)" class="md-accent md-raised">Eliminar</md-button>
                             </template>
                         </el-table-column>
                     </data-tables-server>
@@ -94,11 +94,28 @@ export default {
         },
         openGlass(id){
             this.$router.push({name: 'Edit-Lense', params: {id: id}})
+        },
+        deleteGlass(id){
+            store.dispatch('editor/deleteGlass', id, {root:true})
+                .then(resp=>{
+                    this.getData()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
         }
     }
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+@import '@/assets/css/_vars';
 
+.card{
+    .table-image{
+        width: 160px;
+        height: 200px;
+        object-fit: cover;
+    }
+}
 </style>
