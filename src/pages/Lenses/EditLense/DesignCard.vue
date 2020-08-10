@@ -28,8 +28,13 @@
                     <span>{{ design.color.hex }}</span>
                 </div>
             </div>
-            <div v-for="url in design.images" :key="url" class="col-xs-12 col-sm-6 col-md-4 design-images">
+            <div v-show="showImages" v-for="url in design.images" :key="url" class="col-xs-12 col-sm-6 col-md-4 design-images">
                 <img :src="url" alt="" />
+            </div>
+            <div class="col-12 text-right">
+                <md-button @click="showImages = !showImages" class="md-dense md-raised md-primary mx-0 mt-3">
+                    {{ showImages ? 'Ocultar' : 'Mostrar'}} imagenes
+                </md-button>
             </div>
             <div class="col-12 text-right">
                 <md-button @click="isDeleting = true" :disabled="isLoading" class="md-dense md-raised md-accent mx-0 mt-3">
@@ -59,6 +64,7 @@ export default {
     },
     data: ()=>({
         isDeleting: false,
+        showImages: false
     }),
     methods: {
         deleteDesign() {

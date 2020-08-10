@@ -2,46 +2,37 @@
     <div>
         <md-dialog-confirm
             :md-active.sync="isDeleting"
-            md-title="¿Deseas eliminar el lente con todos sus diseños?"
-            md-content="Al eliminar este lente con todos sus diseños, estos no podrán ser recuperados posteriormente. <br>Consulta con tu persona a cargo está opción."
+            md-title="¿Deseas eliminar el banner?"
+            md-content="Al eliminar este banner, este no podrá ser recuperado posteriormente. <br>Consulta con tu persona a cargo está opción."
             md-confirm-text="Borrar"
             md-cancel-text="Cancelar"
-            @md-cancel="onCancel('lente')"
-            @md-confirm="onAccept(deleteGlasss)"
-        >
-        </md-dialog-confirm>
-        <div class="card">
+            @md-cancel="onCancel('banner')"
+            @md-confirm="onAccept(deleteItem)"
+        />
+        <div class="card banners">
             <div class="card-header">
-                <h1 class="title">Lentes</h1>
+                <h1 class="title">Banners</h1>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-12">
-                        <md-button @click="goTo('Create-Lense')" class="md-primary md-raised md-dense" type="default">
+                        <md-button @click="goTo('Create-Banner')" class="md-primary md-raised md-dense" type="default">
                             <i class="tim-icons icon-simple-add"></i>
-                            Agregar lente
+                            Agregar banner
                         </md-button>
                     </div>
-                    <!-- <div class="col-12">
-                        <el-input v-model="filters[0].value"></el-input>
-                    </div> -->
-                    <div class="col-12 mt-4">
-                        <data-tables-server :filters="filters" :data="glasses" :total="total" :pagination-props="{ pageSizes: [5, 10, 15] }">
+                     <div class="col-12 mt-4">
+                        <data-tables-server :filters="filters" :data="banners" :total="total" :pagination-props="{ pageSizes: [5, 10, 15] }">
                             <el-table-column label="Imagen" min-width="60px">
                                 <template slot-scope="scope">
-                                    <img :src="scope.row.designs.length > 0 ? scope.row.designs[0].mainImage : 'https://source.unsplash.com/200x200?empty,nothing'" class="table-image">
+                                    <img :src="scope.row.image ? scope.row.image : 'https://source.unsplash.com/200x200?empty,nothing'" class="table-image">
                                 </template>
                             </el-table-column>
                             <el-table-column :key="t.prop" v-for="t in titles" :prop="t.prop" :label="t.label">
                             </el-table-column>
-                            <el-table-column label="Diseños disponibles" min-width="100px">
-                                <template slot-scope="scope">
-                                    <div class="text-center w-100">{{ (scope.row.designs).length }}</div>
-                                </template>
-                            </el-table-column>
                             <el-table-column label="Actions" min-width="100px">
                                 <template slot-scope="scope">
-                                    <md-button @click="openItem('Edit-Lense',scope.row.id)" class="md-primary md-raised">Editar</md-button>
+                                    <md-button class="md-primary md-raised">Vista previa</md-button>
                                     <md-button @click="attemptDelete(scope.row)" class="md-accent md-raised">Eliminar</md-button>
                                 </template>
                             </el-table-column>
@@ -54,31 +45,30 @@
 </template>
 
 <script>
-import { getGlasses } from '@/api/glasses'
 import store from '@/store'
 import { mapState } from 'vuex'
 import attemptDelete from '@/mixins/attemptDelete'
 import goTo from '@/mixins/goTo'
 
 export default {
-    name: 'Leneses',
-    mixins: [attemptDelete,goTo],
-    computed:{
-        total(){
-            return this.glasses.length
-        },
-        ...mapState('editor',{
-            loading: 'isLoading'
-        })
+    name: 'Banners',
+    mixins: [attemptDelete, goTo],
+    mounted(){
+        this.getData()
     },
-    data: ()=>({
-        start: 1,
-        limit: 20,
-        glasses: [],
+    data: () => ({
         titles: [
             {
-                prop: "name",
-                label: "Nombre modelo"
+                prop: "title",
+                label: "Titulo del banner"
+            },
+            {
+                prop: "buttonText",
+                label: "Texto del boton"
+            },
+            {
+                prop: "buttonUrl",
+                label: "Enlace del boton"
             }
         ],
         filters: [{
@@ -86,20 +76,18 @@ export default {
             'search_prop': 'name' // define search_prop for backend usage.
         }]
     }),
-    mounted(){
-        this.getData()
-    },
-    destroyed(){
-        store.dispatch('loading/notLoading',null,{root:true})
+    computed: {
+        ...mapState('banners', {
+            banners: 'banners'
+        }),
+        total(){
+            return this.banners.length
+        }
     },
     methods: {
         getData(){
             store.dispatch('loading/isLoading',null,{root:true})
-            getGlasses(this.start, this.limit)
-                .then(resp=>{
-                    console.log(resp)
-                    this.glasses = resp.data
-                })
+            store.dispatch('banners/getItems', null, {root:true})
                 .catch(err=>{
                     console.log(err)
                 })
@@ -107,8 +95,8 @@ export default {
                     store.dispatch('loading/notLoading',null,{root:true})
                 })
         },
-        deleteGlass(){
-            store.dispatch('editor/deleteGlass', this.itemToDelete.id, {root:true})
+        deleteItem(){
+            store.dispatch('banners/deleteItem', this.itemToDelete.id, {root:true})
                 .then(resp=>{
                     this.getData()
                     this.$notify({
@@ -132,14 +120,6 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-@import '@/assets/css/_vars';
+<style>
 
-.card{
-    .table-image{
-        width: 160px;
-        height: 200px;
-        object-fit: contain;
-    }
-}
 </style>

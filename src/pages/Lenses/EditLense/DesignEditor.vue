@@ -59,7 +59,7 @@
                     <div class="md-title">Estilos del lente</div>
                 </md-card-header>
                 <md-card-content>
-                    <div class="mb-5" v-for="s in lenseStyles" :key="s.name">
+                    <div :class="{'mb-5': lenseStyles.length > 1}" v-for="s in lenseStyles" :key="s.name">
                         <DesignCard :design="s" />
                     </div>
                 </md-card-content>

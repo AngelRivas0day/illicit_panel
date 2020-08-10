@@ -5,6 +5,7 @@ import Vuex from 'vuex'
 import oauth from './modules/oauth'
 import loading from './modules/loading'
 import editor from './modules/editor'
+import banners from './modules/banners'
 
 Vue.use(Vuex)
 
@@ -13,6 +14,7 @@ export default new Vuex.Store({
   modules: {
     oauth,
     loading,
-    editor
+    editor,
+    banners
   }
 })

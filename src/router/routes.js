@@ -10,6 +10,10 @@ const Notifications = () => import(/* webpackChunkName: "common" */"@/pages/Noti
 const Icons = () => import(/* webpackChunkName: "common" */ "@/pages/Icons.vue");
 const Lenses = () => import('@/pages/Lenses/Index.vue');
 const Lense = () => import('@/pages/Lenses/EditLense/Index.vue');
+const Admins = () => import('@/pages/Admins/Index.vue');
+const Admin = () => import('@/pages/Admins/EditAdmin/Index.vue');
+const Banners = () => import('@/pages/Banners/Index.vue');
+const Banner = () => import('@/pages/Banners/EditBanner/Index.vue');
 const Login = () => import('@/pages/Auth/Login/Index.vue')
 
 const routes = [
@@ -55,6 +59,31 @@ const routes = [
         path: 'lentes/create/',
         name: 'Create-Lense',
         component: Lense
+      },
+      {
+        path: 'admins',
+        name: 'Admins',
+        component: Admins
+      },
+      {
+        path: 'admins/edit/:id',
+        name: 'Edit-Admin',
+        component: Admin
+      },
+      {
+        path: 'admins/create/',
+        name: 'Create-Admin',
+        component: Admin
+      },
+      {
+        path: 'banners',
+        name: 'Banners',
+        component: Banners
+      },
+      {
+        path: 'banners/create/',
+        name: 'Create-Banner',
+        component: Banner
       }
     ]
   },
