@@ -93,7 +93,7 @@ const routes = [
         component: Maps
       },
       {
-        path: 'mapas/:id',
+        path: 'mapas/create',
         name: 'Map',
         component: Map
       }
