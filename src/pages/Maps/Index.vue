@@ -25,18 +25,29 @@
                         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4">
                             <md-card class="map-card">
                                 <md-card-media>
-                                    <img class="map-card-image" src="https://70stma.co.uk/wp-content/uploads/map-placeholder.jpg" alt="Map">
+                                    <gmap-map
+                                        class="map"
+                                        :center="center"
+                                        :zoom="15"
+                                        :options="mapStyle"
+                                        style="width:100%;  height: 200px;"
+                                    >
+                                        <gmap-marker
+                                            :position="localPin.marker"
+                                            @click="center = localPin.marker"
+                                        ></gmap-marker>
+                                    </gmap-map>
                                 </md-card-media>
 
                                 <md-card-header class="map-card-header">
-                                    <div class="md-title">Title goes here</div>
-                                    <div class="md-subhead">Subtitle here</div>
+                                    <div class="md-title">{{ localPin.streetName }}</div>
+                                    <div class="md-subhead">#{{ localPin.extNumber }}</div>
                                 </md-card-header>
 
                                 <md-card-expand>
                                     <md-card-actions class="map-card-actions" md-alignment="space-between">
                                     <div>
-                                        <md-button>Vista previa</md-button>
+                                        <md-button :to="localPin.link" class="md-primary">Google maps</md-button>
                                         <md-button>Eliminar</md-button>
                                     </div>
                                     <md-card-expand-trigger>
@@ -48,71 +59,7 @@
 
                                     <md-card-expand-content>
                                         <md-card-content>
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea, nostrum odio. Dolores, sed accusantium quasi non, voluptas eius illo quas, saepe voluptate pariatur in deleniti minus sint. Excepturi.
-                                        </md-card-content>
-                                    </md-card-expand-content>
-                                </md-card-expand>
-                            </md-card>
-                        </div>
-                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4">
-                            <md-card class="map-card">
-                                <md-card-media>
-                                    <img class="map-card-image" src="https://70stma.co.uk/wp-content/uploads/map-placeholder.jpg" alt="Map">
-                                </md-card-media>
-
-                                <md-card-header class="map-card-header">
-                                    <div class="md-title">Title goes here</div>
-                                    <div class="md-subhead">Subtitle here</div>
-                                </md-card-header>
-
-                                <md-card-expand>
-                                    <md-card-actions class="map-card-actions" md-alignment="space-between">
-                                    <div>
-                                        <md-button>Vista previa</md-button>
-                                        <md-button>Eliminar</md-button>
-                                    </div>
-                                    <md-card-expand-trigger>
-                                        <md-button class="md-icon-button no-outline">
-                                            <md-icon>keyboard_arrow_down</md-icon>
-                                        </md-button>
-                                    </md-card-expand-trigger>
-                                    </md-card-actions>
-
-                                    <md-card-expand-content>
-                                        <md-card-content>
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea, nostrum odio. Dolores, sed accusantium quasi non, voluptas eius illo quas, saepe voluptate pariatur in deleniti minus sint. Excepturi.
-                                        </md-card-content>
-                                    </md-card-expand-content>
-                                </md-card-expand>
-                            </md-card>
-                        </div>
-                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4">
-                            <md-card class="map-card">
-                                <md-card-media>
-                                    <img class="map-card-image" src="https://70stma.co.uk/wp-content/uploads/map-placeholder.jpg" alt="Map">
-                                </md-card-media>
-
-                                <md-card-header class="map-card-header">
-                                    <div class="md-title">Title goes here</div>
-                                    <div class="md-subhead">Subtitle here</div>
-                                </md-card-header>
-
-                                <md-card-expand>
-                                    <md-card-actions class="map-card-actions" md-alignment="space-between">
-                                    <div>
-                                        <md-button>Vista previa</md-button>
-                                        <md-button @click="attemptDelete({id: 1, foo:'bar'})">Eliminar</md-button>
-                                    </div>
-                                    <md-card-expand-trigger>
-                                        <md-button class="md-icon-button no-outline">
-                                            <md-icon>keyboard_arrow_down</md-icon>
-                                        </md-button>
-                                    </md-card-expand-trigger>
-                                    </md-card-actions>
-
-                                    <md-card-expand-content>
-                                        <md-card-content>
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea, nostrum odio. Dolores, sed accusantium quasi non, voluptas eius illo quas, saepe voluptate pariatur in deleniti minus sint. Excepturi.
+                                            {{ localPin.description }}
                                         </md-card-content>
                                     </md-card-expand-content>
                                 </md-card-expand>
@@ -129,18 +76,32 @@
 import goTo from '@/mixins/goTo'
 import attemptDelete from '@/mixins/attemptDelete'
 import { mapState, mapActions } from 'vuex'
+import mapsConfig from '@/mixins/mapsConfig'
 
 export default {
     name: 'Maps',
-    mixins: [goTo, attemptDelete],
+    mixins: [goTo, attemptDelete, mapsConfig],
     computed: {
-        ...mapState('maps',{
+        ...mapState('pins',{
             pins: 'pins',
             isLoading: 'isLoading'
         })
     },
+    data: () => ({
+         localPin: {
+            name: 'Av Salto del Agua 2415',
+            streetName: 'Av Salto del Agua',
+            extNumber: '2415',
+            description: 'test',
+            link: 'https://maps.google.com/?q=Av+Salto+del+Agua+2415,+Jardines+del+Country,+44210+Guadalajara,+Jal.,+Mexico&ftid=0x8428ae2d45c66f8b:0x6546bd02a77a7600',
+            marker: {
+                lat: 20.7098146,
+                lng: -103.3692752
+            }
+        }
+    }),
     methods: {
-        ...mapActions('maps',{
+        ...mapActions('pins',{
             getData: 'getPins',
             delete: 'deletePin'
         }),

@@ -1,6 +1,6 @@
 export default {
     data: () => ({
-        center: { lat: 45.508, lng: -73.587 },
+        center: { lat: 20.7098146, lng: -103.3692752 },
         markers: [],
         places: [],
         currentPlace: null,

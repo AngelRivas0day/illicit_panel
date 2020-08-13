@@ -26,7 +26,7 @@
                         </template>
                 </gmap-autocomplete>
                 <md-field>
-                    <label>Textarea with Autogrow</label>
+                    <label>Descripci&oacute;n de la ubicaci&oacute;n</label>
                     <md-textarea v-model="localPin.description" md-autogrow></md-textarea>
                 </md-field>
             </div>
@@ -48,25 +48,20 @@
                     </gmap-map>
                 </div>
             </div>
-            <div class="col-12 text-right">
-                <md-button class="md-dense md-primary md-raised" @click="addMarker">Guardar</md-button>
+            <div class="col-12 text-right mt-3">
+                <md-button class="md-dense md-primary md-raised" type="submit">Guardar</md-button>
             </div>
         </form>
     </div>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 import mapsConfig from '@/mixins/mapsConfig'
 
 export default {
     name: 'EditForm',
     mixins: [mapsConfig],
-    computed: {
-        ...mapState('maps',{
-            pin: 'pin'
-        })
-    },
     mounted(){
         this.geolocate()
     },
@@ -85,8 +80,8 @@ export default {
         inputFocus: false
     }),
     methods: {
-        ...mapActions('maps',{
-            create: 'createPin'
+        ...mapActions('pins',{
+            createPin: 'createPin'
         }),
         onSubmit(e){
             e.preventDefault()
@@ -117,7 +112,6 @@ export default {
                     lat: this.currentPlace.geometry.location.lat(),
                     lng: this.currentPlace.geometry.location.lng(),
                 };
-                console.log("marker: ", marker)
                 this.markers.push({ position: marker });
                 this.places.push(this.currentPlace);
                 this.center = marker;
@@ -125,30 +119,30 @@ export default {
             }
 
         },
-        addMarker() {
-            if (this.currentPlace) {
-                this.localPin = {
-                    name: this.currentPlace.name,
-                    streetName: this.currentPlace.address_components[1].short_name,
-                    extNumber: this.currentPlace.address_components[0].long_name,
-                    description: '',
-                    link: this.currentPlace.url,
-                    marker: {
-                        lat: this.currentPlace.geometry.location.lat(),
-                        lon: this.currentPlace.geometry.location.lng()
-                    }
-                }
-                const marker = {
-                    lat: this.currentPlace.geometry.location.lat(),
-                    lng: this.currentPlace.geometry.location.lng(),
-                };
-                console.log("marker: ", marker)
-                this.markers.push({ position: marker });
-                this.places.push(this.currentPlace);
-                this.center = marker;
-                this.currentPlace = null;
-            }
-        },
+        onSubmit(e){
+            e.preventDefault()
+            console.log(this.localPin)
+            this.createPin(this.localPin)
+                .then(resp=>{
+                    this.$notify({
+                        verticalAlign: 'top',
+                        horizontalAlign: 'right',
+                        message: 'Pin creado con éxito',
+                        type: 'success'
+                    });
+                })
+                .catch(err=>{
+                    this.$notify({
+                        verticalAlign: 'top',
+                        horizontalAlign: 'right',
+                        message: 'Ha habido un error al crear el Pin',
+                        type: 'warning'
+                    });
+                })
+                .finally(()=>{
+                    this.$router.push({name: 'Maps'})
+                })
+        }
     }
 }
 </script>
