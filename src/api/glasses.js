@@ -27,7 +27,7 @@ function createGlass(glass){
 function updateGlass(id, glass){
     const config = {
         headers: {
-            'Content-Type':'application/x-www-form-urlencoded',
+            'Content-Type':'application/json',
             'Authorization':`Bearer ${localStorage.getItem('token')}`,
         }
     }

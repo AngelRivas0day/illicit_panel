@@ -8,6 +8,9 @@ export default {
     mutations: {
       SET_LOADING(state, payload) {
         state.isLoading = payload
+      },
+      TOGGLE_LOADING(state){
+        state.isLoading = !state.isLoading
       }
     },
     actions: {

@@ -22,6 +22,7 @@ import '@/plugins/VueMaterial'
 import '@/plugins/VuePicker'
 import '@/plugins/Vuelidate'
 import '@/plugins/DataTables'
+import '@/plugins/GoogleMaps'
 
 import BlackDashboard from "./plugins/blackDashboard";
 import i18n from "./i18n"

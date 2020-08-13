@@ -7,14 +7,16 @@ import NotFound from "@/pages/NotFoundPage.vue";
 const Dashboard = () => import(/* webpackChunkName: "dashboard" */"@/pages/Dashboard.vue");
 const Profile = () => import(/* webpackChunkName: "common" */ "@/pages/Profile.vue");
 const Notifications = () => import(/* webpackChunkName: "common" */"@/pages/Notifications.vue");
-const Icons = () => import(/* webpackChunkName: "common" */ "@/pages/Icons.vue");
-const Lenses = () => import('@/pages/Lenses/Index.vue');
-const Lense = () => import('@/pages/Lenses/EditLense/Index.vue');
-const Admins = () => import('@/pages/Admins/Index.vue');
-const Admin = () => import('@/pages/Admins/EditAdmin/Index.vue');
-const Banners = () => import('@/pages/Banners/Index.vue');
-const Banner = () => import('@/pages/Banners/EditBanner/Index.vue');
-const Login = () => import('@/pages/Auth/Login/Index.vue')
+const Icons = () => import(/* webpackChunkName: "Icons" */ "@/pages/Icons.vue");
+const Lenses = () => import(/* webpackChunkName: "Lenses" */ '@/pages/Lenses/Index.vue');
+const Lense = () => import(/* webpackChunkName: "Lense" */ '@/pages/Lenses/EditLense/Index.vue');
+const Admins = () => import(/* webpackChunkName: "Admins" */ '@/pages/Admins/Index.vue');
+const Admin = () => import(/* webpackChunkName: "Admin" */ '@/pages/Admins/EditAdmin/Index.vue');
+const Banners = () => import(/* webpackChunkName: "Banners" */ '@/pages/Banners/Index.vue');
+const Banner = () => import(/* webpackChunkName: "Banner" */ '@/pages/Banners/EditBanner/Index.vue');
+const Login = () => import(/* webpackChunkName: "Login" */ '@/pages/Auth/Login/Index.vue')
+const Maps = () => import(/* webpackChunkName: "Maps" */ '@/pages/Maps/Index.vue')
+const Map = () => import(/* webpackChunkName: "Map" */ '@/pages/Maps/CreatePin/Index.vue')
 
 const routes = [
   {
@@ -84,6 +86,16 @@ const routes = [
         path: 'banners/create/',
         name: 'Create-Banner',
         component: Banner
+      },
+      {
+        path: 'mapas',
+        name: 'Maps',
+        component: Maps
+      },
+      {
+        path: 'mapas/:id',
+        name: 'Map',
+        component: Map
       }
     ]
   },

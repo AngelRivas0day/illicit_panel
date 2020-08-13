@@ -56,13 +56,13 @@
 import DesignEditor from './DesignEditor'
 import { createGlass } from '@/api/glasses'
 import store from '@/store'
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
     name: 'EditForm',
     components: {DesignEditor},
     computed: {
-        ...mapState('editor',{
+        ...mapState('glasses',{
             glass: 'glass'
         })
     },
@@ -94,13 +94,15 @@ export default {
         }
     },
     methods: {
-        createGlas(){
+        ...mapActions('glasses',{
+            createGlass: 'createGlass',
+            updateGlass: 'updateGlass'
+        }),
+        create(){
             // metodo que es llamado cuando se crea un lente
             // sera controlado por un flag
-
-            store.dispatch('editor/createGlass',this.form, {root:true})
+            this.createGlass(this.form)
                 .then(resp=>{
-                    console.log(resp)
                     this.$notify({
                         verticalAlign: 'top',
                         horizontalAlign: 'right',
@@ -120,11 +122,16 @@ export default {
                     });
                 })
         },
-        updateGlass(){
-            console.log(this.form)
-            store.dispatch('editor/updateGlass', this.form, {root:true})
+        update(){
+            const updatedGlass = {
+                name: this.form.name,
+                description: this.form.description,
+                price: this.form.price,
+                brands: this.form.brands,
+                categories: this.form.categories
+            }
+            this.updateGlass(updatedGlass)
                 .then(resp=>{
-                    console.log(resp)
                     this.$notify({
                         verticalAlign: 'top',
                         horizontalAlign: 'right',
@@ -148,9 +155,9 @@ export default {
         onSubmit(e){
             e.preventDefault()
             if(this.isCreating){
-                this.createGlas()
+                this.create()
             }else{
-                this.updateGlass()
+                this.update()
             }
         }
     }

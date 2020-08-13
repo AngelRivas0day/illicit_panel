@@ -28,6 +28,9 @@
                     <span>{{ design.color.hex }}</span>
                 </div>
             </div>
+            <div v-show="showImages" class="col-xs-12 col-sm-12">
+                <img class="main-image" :src="design.mainImage" alt="">
+            </div>
             <div v-show="showImages" v-for="url in design.images" :key="url" class="col-xs-12 col-sm-6 col-md-4 design-images">
                 <img :src="url" alt="" />
             </div>
@@ -58,7 +61,7 @@ export default {
         }
     },
     computed: {
-        ...mapState('editor',{
+        ...mapState('glasses',{
             isLoading: 'isLoading'
         })
     },
@@ -68,7 +71,7 @@ export default {
     }),
     methods: {
         deleteDesign() {
-            store.dispatch('editor/deleteGlassDesign', {name: this.design.name}, {root:true})
+            store.dispatch('glasses/deleteGlassDesign', {name: this.design.name}, {root:true})
                 .then(()=>{
                     this.$notify({
                         verticalAlign: 'top',
@@ -117,6 +120,14 @@ export default {
         span{
             color: white;
             font-weight: bold;
+        }
+    }
+    .main-image{
+        width: 90%;
+        display: block;
+        margin: 0 auto;
+        @media #{$break-medium}{
+            width: 40%;
         }
     }
     .design-images{

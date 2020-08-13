@@ -7,7 +7,7 @@
             md-confirm-text="Borrar"
             md-cancel-text="Cancelar"
             @md-cancel="onCancel('lente')"
-            @md-confirm="onAccept(deleteGlasss)"
+            @md-confirm="onAccept(deleteGlass)"
         >
         </md-dialog-confirm>
         <div class="card">
@@ -26,7 +26,7 @@
                         <el-input v-model="filters[0].value"></el-input>
                     </div> -->
                     <div class="col-12 mt-4">
-                        <data-tables-server :filters="filters" :data="glasses" :total="total" :pagination-props="{ pageSizes: [5, 10, 15] }">
+                        <data-tables-server :filters="filters" :data="glasses" :pagination-props="{ pageSizes: [5, 10, 15] }">
                             <el-table-column label="Imagen" min-width="60px">
                                 <template slot-scope="scope">
                                     <img :src="scope.row.designs.length > 0 ? scope.row.designs[0].mainImage : 'https://source.unsplash.com/200x200?empty,nothing'" class="table-image">
@@ -54,27 +54,21 @@
 </template>
 
 <script>
-import { getGlasses } from '@/api/glasses'
-import store from '@/store'
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import attemptDelete from '@/mixins/attemptDelete'
 import goTo from '@/mixins/goTo'
+import store from '@/store'
 
 export default {
     name: 'Leneses',
     mixins: [attemptDelete,goTo],
     computed:{
-        total(){
-            return this.glasses.length
-        },
-        ...mapState('editor',{
-            loading: 'isLoading'
+        ...mapState('glasses',{
+            loading: 'isLoading',
+            glasses: 'glasses'
         })
     },
     data: ()=>({
-        start: 1,
-        limit: 20,
-        glasses: [],
         titles: [
             {
                 prop: "name",
@@ -93,22 +87,12 @@ export default {
         store.dispatch('loading/notLoading',null,{root:true})
     },
     methods: {
-        getData(){
-            store.dispatch('loading/isLoading',null,{root:true})
-            getGlasses(this.start, this.limit)
-                .then(resp=>{
-                    console.log(resp)
-                    this.glasses = resp.data
-                })
-                .catch(err=>{
-                    console.log(err)
-                })
-                .finally(()=>{
-                    store.dispatch('loading/notLoading',null,{root:true})
-                })
-        },
+        ...mapActions('glasses',{
+            getData: 'getGlasses',
+            delete: 'deleteGlass'
+        }),
         deleteGlass(){
-            store.dispatch('editor/deleteGlass', this.itemToDelete.id, {root:true})
+            this.delete(this.itemToDelete.id)
                 .then(resp=>{
                     this.getData()
                     this.$notify({

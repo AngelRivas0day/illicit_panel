@@ -4,8 +4,9 @@ import Vuex from 'vuex'
 // Importar oauth
 import oauth from './modules/oauth'
 import loading from './modules/loading'
-import editor from './modules/editor'
+import glasses from './modules/glasses'
 import banners from './modules/banners'
+import maps from './modules/maps'
 
 Vue.use(Vuex)
 
@@ -14,7 +15,8 @@ export default new Vuex.Store({
   modules: {
     oauth,
     loading,
-    editor,
-    banners
+    glasses,
+    banners,
+    maps
   }
 })

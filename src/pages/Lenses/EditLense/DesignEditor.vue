@@ -84,7 +84,7 @@ export default {
     name: 'StyleEditor',
     components: {DesignCard},
     computed: {
-        ...mapState('editor',{
+        ...mapState('glasses',{
             designs: 'designs'
         })
     },
@@ -127,7 +127,7 @@ export default {
             Array.from(this.selectedFile).forEach((element,i) => {
                 formData.append("mainImage", element)
             });
-            store.dispatch('editor/createGlassDesign', formData, {root:true})
+            store.dispatch('glasses/createGlassDesign', formData, {root:true})
                 .then(resp=>{
                     console.log(resp)
                 })

@@ -12,25 +12,23 @@
 
 <script>
 import EditForm from './EditForm'
-import { getGlass } from '@/api/glasses'
-import store from '@/store'
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
     name: 'EditLense',
     components: {EditForm},
-    beforeMount(){
+    mounted(){
         // obtenemos el parametro de la ruta si es que viene uno
         // si no viene uno entonces el formulario se queda para crear
         // un lente en lugar de editar uno
         if(this.$route.params.id){
             this.itemId = this.$route.params.id;
             console.log("Id: ", this.itemId)
-            this.getData()
+            this.getGlass(this.itemId)
         }
     },
     computed: {
-        ...mapState('editor',{
+        ...mapState('glasses',{
             glass: 'glass'
         })
     },
@@ -38,19 +36,9 @@ export default {
         itemId: null,
     }),
     methods: {
-        getData(){
-            store.dispatch('loading/isLoading',null,{root:true})
-            store.dispatch('editor/getGlass', this.itemId, {root:true})
-                .then(resp=>{
-                    console.log("Lente desde vuex: ",resp)
-                })
-                .catch(err=>{
-                    console.log("Error desde vuex: ", err)
-                })
-                .finally(()=>{
-                    store.dispatch('loading/notLoading',null,{root:true})
-                })
-        }
+        ...mapActions('glasses',{
+            getGlass: 'getGlass'
+        })
     }
 }
 </script>
