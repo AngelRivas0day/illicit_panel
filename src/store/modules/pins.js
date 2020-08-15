@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import * as api from '@/api/api'
 
 export default {
@@ -30,6 +31,7 @@ export default {
                 commit('SET_LOADING', true)
                 api.getAll('pins')
                     .then(resp=>{
+                        console.log("resp: ", resp)
                         commit('SET_PINS', resp.data)
                         commit('SET_SUCCESS', true)
                         resolve(resp.data)
@@ -62,7 +64,7 @@ export default {
         },
         createPin({commit}, newPin){
             return new Promise((resolve, reject)=>{
-                api.post_('pins', newPin)
+                api.post_('pins', newPin, true)
                     .then(resp=>{
                         commit('SET_SUCCESS', true)
                         resolve(resp)
@@ -76,19 +78,20 @@ export default {
                     })
             })
         },
-        deletePin({commit}, pinId){
+        deletePin({commit, dispatch}, pinId){
             return new Promise((resolve, reject)=>{
                 commit('SET_LOADING', true)
-                api.delete_('pins', pinId)
+                api.delete_('pins', pinId, true)
                     .then(resp=>{
                         commit('SET_SUCCESS', true)
-                        resolve()
+                        resolve(resp)
                     })
                     .catch(err=>{
                         commit('SET_SUCCESS', false)
                         reject(err)
                     })
                     .finally(()=>{
+                        dispatch('pins/getPins', null, {root:true})
                         commit('SET_LOADING', false)
                     })
             })

@@ -68,13 +68,13 @@ export default {
     data: () => ({
         localPin: {
             name: '',
-            streetName: '',
+            street: '',
             extNumber: '',
             description: '',
             link: '',
             marker: {
                 lat: '',
-                lon: ''
+                lng: ''
             }
         },
         inputFocus: false
@@ -99,13 +99,13 @@ export default {
             if (this.currentPlace) {
                 this.localPin = {
                     name: this.currentPlace.name,
-                    streetName: this.currentPlace.address_components[1].short_name,
+                    street: this.currentPlace.address_components[1].short_name,
                     extNumber: this.currentPlace.address_components[0].long_name,
                     description: '',
                     link: this.currentPlace.url,
                     marker: {
                         lat: this.currentPlace.geometry.location.lat(),
-                        lon: this.currentPlace.geometry.location.lng()
+                        lng: this.currentPlace.geometry.location.lng()
                     }
                 }
                 const marker = {

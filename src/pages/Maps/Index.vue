@@ -21,34 +21,34 @@
                             Agregar pin
                         </md-button>
                     </div>
-                    <template>
-                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4">
+                    <template v-if="pins">
+                        <div v-for="pin in pins" :key="pin.id" class="col-xs-12 col-sm-12 col-md-6 col-lg-4">
                             <md-card class="map-card">
                                 <md-card-media>
                                     <gmap-map
                                         class="map"
-                                        :center="center"
+                                        :center="pin.marker"
                                         :zoom="15"
                                         :options="mapStyle"
                                         style="width:100%;  height: 200px;"
                                     >
                                         <gmap-marker
-                                            :position="localPin.marker"
-                                            @click="center = localPin.marker"
+                                            :position="pin.marker"
+                                            @click="center = pin.marker"
                                         ></gmap-marker>
                                     </gmap-map>
                                 </md-card-media>
 
                                 <md-card-header class="map-card-header">
-                                    <div class="md-title">{{ localPin.streetName }}</div>
-                                    <div class="md-subhead">#{{ localPin.extNumber }}</div>
+                                    <div class="md-title">{{ pin.street }}</div>
+                                    <div class="md-subhead">#{{ pin.extNumber }}</div>
                                 </md-card-header>
 
                                 <md-card-expand>
                                     <md-card-actions class="map-card-actions" md-alignment="space-between">
                                     <div>
-                                        <md-button :to="localPin.link" class="md-primary">Google maps</md-button>
-                                        <md-button>Eliminar</md-button>
+                                        <md-button :to="pin.link" class="md-primary">Google maps</md-button>
+                                        <md-button @click="attemptDelete(pin)">Eliminar</md-button>
                                     </div>
                                     <md-card-expand-trigger>
                                         <md-button class="md-icon-button no-outline">
@@ -59,7 +59,7 @@
 
                                     <md-card-expand-content>
                                         <md-card-content>
-                                            {{ localPin.description }}
+                                            {{ pin.description }}
                                         </md-card-content>
                                     </md-card-expand-content>
                                 </md-card-expand>
@@ -87,22 +87,12 @@ export default {
             isLoading: 'isLoading'
         })
     },
-    data: () => ({
-         localPin: {
-            name: 'Av Salto del Agua 2415',
-            streetName: 'Av Salto del Agua',
-            extNumber: '2415',
-            description: 'test',
-            link: 'https://maps.google.com/?q=Av+Salto+del+Agua+2415,+Jardines+del+Country,+44210+Guadalajara,+Jal.,+Mexico&ftid=0x8428ae2d45c66f8b:0x6546bd02a77a7600',
-            marker: {
-                lat: 20.7098146,
-                lng: -103.3692752
-            }
-        }
-    }),
+    mounted(){
+        this.getPins()
+    },
     methods: {
         ...mapActions('pins',{
-            getData: 'getPins',
+            getPins: 'getPins',
             delete: 'deletePin'
         }),
         deletePin(){

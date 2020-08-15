@@ -20,33 +20,63 @@ function setHeaders(contentType, token = null){
     return config;
 }
 
-function getOne(endpoint, id){
-    const config = setHeaders('json')
+function getOne(endpoint, id, isToken = false){
+    var config;
+    if(isToken == true){
+        config = setHeaders('json', localStorage.getItem('token'))
+    }else{
+        config = setHeaders('json')
+    }
     return Axios.get(`${base_url}/${endpoint}/${id}`, config)
 }
 
-function getAll(endpoint){
-    const config = setHeaders('json')
+function getAll(endpoint, isToken = false){
+    var config;
+    if(isToken == true){
+        config = setHeaders('json', localStorage.getItem('token'))
+    }else{
+        config = setHeaders('json')
+    }
     return Axios.get(`${base_url}/${endpoint}`, config)
 }
 
-function patch(endpoint, id, data){
-    const config = setHeaders('x-www-url-formencoded')
+function patch(endpoint, id, data, isToken = false){
+    var config;
+    if(isToken == true){
+        config = setHeaders('x-www-url-formencoded', localStorage.getItem('token'))
+    }else{
+        config = setHeaders('x-www-url-formencoded')
+    }
     return Axios.patch(`${base_url}/${endpoint}/${id}`, data, config)
 }
 
-function post(endpoint, data){
-    const config = setHeaders('x-www-url-formencoded')
+function post(endpoint, data, isToken = false){
+    var config;
+    if(isToken == true){
+        config = setHeaders('x-www-url-formencoded', localStorage.getItem('token'))
+    }else{
+        config = setHeaders('x-www-url-formencoded')
+    }
     return Axios.post(`${base_url}/${endpoint}`, data, config)
 }
 
-function post_(endpoint, data){
-    const config = setHeaders('json', localStorage.getItem('token'))
+function post_(endpoint, data, isToken = true){
+    var config;
+    if(isToken == true){
+        config = setHeaders('json', localStorage.getItem('token'))
+    }else{
+        config = setHeaders('json')
+    }
     return Axios.post(`${base_url}/${endpoint}`, data, config)
 }
 
-function delete_(endpoint, id){
-    const config = setHeaders('json', localStorage.getItem('token'))
+function delete_(endpoint, id, isToken = true){
+    var config;
+    if(isToken == true){
+        config = setHeaders('json', localStorage.getItem('token'))
+    }else{
+        config = setHeaders('json')
+    }
     return Axios.delete(`${base_url}/${endpoint}/${id}`, config)
 }
 
