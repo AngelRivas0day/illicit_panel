@@ -1,11 +1,14 @@
 <template>
-    <form @submit="login" class="login">
+    <form @submit="onSubmit" class="login">
         <md-card class="login-card">
             <md-card-header>
                 <div class="md-title text-center">ILLICIT ADMIN PANEL</div>
             </md-card-header>
             <md-card-content>
                 <div>
+                    <div class="w-100 mb-3" v-if="isLoading">
+                        <md-progress-bar md-mode="indeterminate"></md-progress-bar>
+                    </div>
                     <md-field>
                         <label>Email</label>
                         <md-input type="email" v-model="form.email" required></md-input>
@@ -14,6 +17,9 @@
                         <label>Password</label>
                         <md-input type="password" v-model="form.password" required></md-input>
                     </md-field>
+                </div>
+                <div v-if="errorMessage" class="text-center text-warning">
+                    {{errorMessage}}
                 </div>
             </md-card-content>
             <md-card-actions>
@@ -25,25 +31,33 @@
 
 <script>
 import store from '@/store'
-
+import { mapActions, mapState } from 'vuex'
 export default {
     name: 'Login',
     data: () => ({
         form: {
             email: '',
             password: ''
-        }
+        },
+        errorMessage: null
     }),
+    computed: {
+        ...mapState('oauth',{
+            isLoading: 'isLoading'
+        })
+    },
     methods: {
-        login(e){
+        ...mapActions('oauth',{
+            login: 'login'
+        }),
+        async onSubmit(e){
             e.preventDefault()
-            store.dispatch('oauth/login', this.form, {root:true})
-                .then(resp=>{
-                    this.$router.push({name: 'dashboard'})
-                })
-                .catch(err=>{
-                    console.log(err)
-                })
+            try {
+                await this.login(this.form)
+                this.$router.push({name: 'dashboard'})
+            } catch(error) {
+                this.errorMessage = "Error al hacer login."
+            }
         }
     }
 }

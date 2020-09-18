@@ -1,14 +1,13 @@
-// oauth.js
-import { login, register, AdminLogout } from '@/api/oauth'
-// Creamos el objeto con "Espacio de Nombres"
-export default {
-  namespaced: true,
-  state: {
+import { login as userLogin, register, AdminLogout } from '@/api/oauth'
+
+const state = {
     isLoading: false,
     token: localStorage.getItem('token') || null,
-    user: ''
-  },
-  mutations: {
+    user: '',
+    error: null
+}
+
+const mutations = {
     AUTH_REQUEST(state, payload){
         state.isLoading = payload
     },
@@ -17,35 +16,30 @@ export default {
         state.token = token
         state.user = user
     },
-    AUTH_ERROR(state){
+    AUTH_ERROR(state, payload){
         state.isLoading = false
+        state.error = payload
     },
     LOGOUT(state){
         state.isLoading = false
-        state.token = null
+        state.token = null 
     }
-  },
-  actions: {
-    login({commit}, user){
-        commit('AUTH_REQUEST', true)
-        return new Promise((resolve, reject)=>{
-            login(user)
-                .then(resp=>{
-                    console.log("Auth: ", resp)
-                    const token = resp.data.token
-                    const user = resp.data.name
-                    localStorage.setItem('token',token)
-                    commit('AUTH_SUCCESS', token, user)
-                    resolve(resp)
-                })
-                .catch(err=>{
-                    commit('AUTH_ERROR')
-                    localStorage.removeItem('token')
-                    reject(err)
-                })
-        })
+}
+
+const actions = {
+    async login({commit}, user){
+        try {
+            commit('AUTH_REQUEST', true)
+            const { data } = await userLogin(user)
+            localStorage.setItem('token', data.token)
+            commit('AUTH_SUCCESS', data.token, data.user)
+            return
+        } catch (error) {
+            commit('AUTH_ERROR', error)
+            localStorage.removeItem('token')
+        }
     },
-    register({commit}, user){
+    async register({commit}, user){
         return new Promise((resolve, reject)=>{
             register(user)
                 .then(resp=>{
@@ -62,7 +56,7 @@ export default {
                 })
         })
     },
-    logout({commit}, token){
+    async logout({commit}, token){
         return new Promise((resolve, reject)=>{
             AdminLogout(token)
                 .then(resp=>{
@@ -76,9 +70,17 @@ export default {
                 })
         })
     }
-  },
-  getters: {
+}
+
+const getters = {
     isLoggedIn: state => !!state.token,
     authStatus: state => state.isLoading,
-  }
+}
+
+export default {
+  namespaced: true,
+  state,
+  mutations,
+  actions,
+  getters
 }
