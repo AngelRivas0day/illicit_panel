@@ -7,7 +7,7 @@
             md-confirm-text="Borrar"
             md-cancel-text="Cancelar"
             @md-cancel="onCancel('pin')"
-            @md-confirm="onAccept(deletePin)"
+            @md-confirm="onAccept(onDelete)"
         ></md-dialog-confirm>
         <div class="maps card">
             <div class="card-header">
@@ -87,16 +87,36 @@ export default {
             isLoading: 'isLoading'
         })
     },
-    mounted(){
-        this.getPins()
+    async mounted(){
+        try {
+            await this.getPins()
+        } catch (error) {
+            console.log(error)
+        }
     },
     methods: {
         ...mapActions('pins',{
             getPins: 'getPins',
-            delete: 'deletePin'
+            deletePin: 'deletePin'
         }),
-        deletePin(){
-            this.delete(this.itemToDelete.id)
+        async onDelete(){
+            try {
+                await this.deletePin(this.itemToDelete.id)
+                this.$notify({
+                    verticalAlign: 'top',
+                    horizontalAlign: 'right',
+                    message: 'El pin ha sido eliminado con éxito',
+                    type: 'success'
+                });
+            } catch (error) {
+                this.$notify({
+                    verticalAlign: 'top',
+                    horizontalAlign: 'right',
+                    message: 'El pin no ha sido eliminado debido a un error',
+                    type: 'warning'
+                });
+            }
+           
         }
     }
 }

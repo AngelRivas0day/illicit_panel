@@ -1,100 +1,76 @@
-import Vue from 'vue'
 import * as api from '@/api/api'
+
+const state = {
+    pins: [],
+    pin: {},
+    error: null,
+    isLoading: false
+}
+
+const mutations = {
+    SET_PINS(state, payload){
+        state.pins = payload
+    },
+    SET_PIN(state, payload){
+        state.pin = payload
+    },
+    SET_LOADING(state, payload){
+        state.isLoading = payload
+    },
+    SET_ERROR(state, payload){
+        state.error = payload
+    }
+}
+
+const actions = {
+    async getPins({commit}){
+        try {
+            commit('SET_LOADING', true)
+            const { data } = await  api.getAll('pins')
+            commit('SET_PINS', data)
+        } catch (error) {
+            commit('SET_ERROR', error)
+        } finally {
+            commit('SET_LOADING', false)
+        }
+    },
+    async getPin({commit}, pinId){
+        try {
+            commit('SET_LOADING', true)
+            const { data } = await api.getOne('pins', pinId)
+            commit('SET_PIN', data)
+        } catch (error) {
+            commit('SET_ERROR', error)
+        } finally {
+            commit('SET_LOADING', false)
+        }
+    },
+    async createPin({commit}, newPin){
+        try {
+            commit('SET_LOADING', true)
+            await  api.post_('pins', newPin, true)
+        } catch (error) {
+            commit('SET_ERROR', error)
+        } finally {
+            commit('SET_LOADING', false)
+        }
+    },
+    async deletePin({commit, dispatch}, pinId){
+        try {
+            commit('SET_LOADING', true)
+            await api.delete_('pins', pinId, true)
+        } catch (error) {
+            commit('SET_ERROR', error)
+        } finally {
+            dispatch('pins/getPins', null, {root:true})
+            commit('SET_LOADING', false)
+        }
+    }
+}
 
 export default {
     namespaced: true,
-    state: {
-        pins: [],
-        pin: {},
-        success: false,
-        isLoading: false
-    },
-    mutations: {
-        SET_PINS(state, payload){
-            state.pins = payload
-            state.success = true
-        },
-        SET_PIN(state, payload){
-            state.pin = payload
-            state.success = true
-        },
-        SET_LOADING(state, payload){
-            state.isLoading = payload
-        },
-        SET_SUCCESS(state, payload){
-            state.success = payload
-        }
-    },
-    actions: {
-        getPins({commit}){
-            return new Promise((resolve, reject)=>{
-                commit('SET_LOADING', true)
-                api.getAll('pins')
-                    .then(resp=>{
-                        console.log("resp: ", resp)
-                        commit('SET_PINS', resp.data)
-                        commit('SET_SUCCESS', true)
-                        resolve(resp.data)
-                    })
-                    .catch(err=>{
-                        commit('SET_SUCCESS', false)
-                        reject(err)
-                    })
-                    .finally(()=>{
-                        commit('SET_LOADING', false)
-                    })
-            })
-        },
-        getPin({commit}, pinId){
-            return new Promise((resolve, reject)=>{
-                commit('SET_LOADING', true)
-                api.getOne('pins', pinId)
-                    .then(resp=>{
-                        commit('SET_PIN', resp.data)
-                        resolve(resp.data)
-                    })
-                    .catch(err=>{
-                        commit('SET_SUCCESS', false)
-                        reject(err)
-                    })
-                    .finally(()=>{
-                        commit('SET_LOADING', false)
-                    })
-            })
-        },
-        createPin({commit}, newPin){
-            return new Promise((resolve, reject)=>{
-                api.post_('pins', newPin, true)
-                    .then(resp=>{
-                        commit('SET_SUCCESS', true)
-                        resolve(resp)
-                    })
-                    .catch(err=>{
-                        commit('SET_SUCCESS', false)
-                        reject(err)
-                    })
-                    .finally(()=>{
-                        commit('SET_LOADING', false)
-                    })
-            })
-        },
-        deletePin({commit, dispatch}, pinId){
-            return new Promise((resolve, reject)=>{
-                commit('SET_LOADING', true)
-                api.delete_('pins', pinId, true)
-                    .then(resp=>{
-                        commit('SET_SUCCESS', true)
-                        resolve(resp)
-                    })
-                    .catch(err=>{
-                        commit('SET_SUCCESS', false)
-                        reject(err)
-                    })
-                    .finally(()=>{
-                        dispatch('pins/getPins', null, {root:true})
-                        commit('SET_LOADING', false)
-                    })
-            })
-        }
-    }
+    state,
+    mutations,
+    actions
 }

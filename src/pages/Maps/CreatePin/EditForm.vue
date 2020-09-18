@@ -117,31 +117,28 @@ export default {
                 this.center = marker;
                 this.currentPlace = null;
             }
-
         },
-        onSubmit(e){
+        async onSubmit(e){
             e.preventDefault()
-            console.log(this.localPin)
-            this.createPin(this.localPin)
-                .then(resp=>{
-                    this.$notify({
-                        verticalAlign: 'top',
-                        horizontalAlign: 'right',
-                        message: 'Pin creado con éxito',
-                        type: 'success'
-                    });
-                })
-                .catch(err=>{
-                    this.$notify({
-                        verticalAlign: 'top',
-                        horizontalAlign: 'right',
-                        message: 'Ha habido un error al crear el Pin',
-                        type: 'warning'
-                    });
-                })
-                .finally(()=>{
-                    this.$router.push({name: 'Maps'})
-                })
+            try {
+                await this.createPin(this.localPin)
+                this.$notify({
+                    verticalAlign: 'top',
+                    horizontalAlign: 'right',
+                    message: 'Pin creado con éxito',
+                    type: 'success'
+                });
+            } catch (error) {
+                console.log(error)
+                this.$notify({
+                    verticalAlign: 'top',
+                    horizontalAlign: 'right',
+                    message: 'Ha habido un error al crear el Pin',
+                    type: 'warning'
+                });
+            } finally {
+                this.$router.push({name: 'Maps'})
+            }
         }
     }
 }
