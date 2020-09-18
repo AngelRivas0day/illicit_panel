@@ -1,4 +1,4 @@
-import { login as userLogin, register, AdminLogout } from '@/api/oauth'
+import { login as userLogin, register as userRegister, AdminLogout } from '@/api/oauth'
 
 const state = {
     isLoading: false,
@@ -40,35 +40,21 @@ const actions = {
         }
     },
     async register({commit}, user){
-        return new Promise((resolve, reject)=>{
-            register(user)
-                .then(resp=>{
-                    // const token = resp.data.token
-                    // const user = resp.data.name
-                    // localStorage.setItem('token',token)
-                    // commit('AUTH_SUCCESS', token, user)
-                    // resolve(resp)
-                })
-                .catch(err=>{
-                    commit('AUTH_ERROR')
-                    localStorage.removeItem('token')
-                    reject(err)
-                })
-        })
+        try {
+            await userRegister(user)
+        } catch (error) {
+            commit('AUTH_ERROR')
+            localStorage.removeItem('token')
+        }
     },
     async logout({commit}, token){
-        return new Promise((resolve, reject)=>{
-            AdminLogout(token)
-                .then(resp=>{
-                    localStorage.removeItem('token')
-                    commit('LOGOUT')
-                    resolve(resp)
-                })
-                .catch(err=>{
-                    commit('AUTH_ERROR')
-                    reject(err)
-                })
-        })
+        try {
+            await AdminLogout(token)
+            localStorage.removeItem('token')
+            commit('LOGOUT')
+        } catch (error) {
+            commit('AUTH_ERROR')
+        }
     }
 }
 
