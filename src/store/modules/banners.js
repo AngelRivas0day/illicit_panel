@@ -1,95 +1,79 @@
 // store/modules/editor.js
 import * as api from '@/api/api'
 
-export default {
-    namespaced: true,
-    state: {
-        success: false,
-        isLoading: false,
-        banners: [],
-        banner: {}
+const state = {
+    isLoading: false,
+    banners: [],
+    banner: {},
+    error: null
+}
+
+const mutations = {
+    SET_ITEMS(state, payload){
+        state.success = true
+        state.banners = payload
     },
-    mutations: {
-        SET_ITEMS(state, payload){
-            state.success = true
-            state.banners = payload
-        },
-        SET_ITEM(state, payload) {
-            state.success = true
-            state.banner = payload
-        },
-        SET_LOADING(state, payload){
-            state.isLoading = payload
-        },
-        SET_ERROR(state, payload){
-            state.success = payload
+    SET_ITEM(state, payload) {
+        state.success = true
+        state.banner = payload
+    },
+    SET_LOADING(state, payload){
+        state.isLoading = payload
+    },
+    SET_ERROR(state, payload){
+        state.error = payload
+    }
+}
+
+const actions = {
+    async getItems({commit}){
+        try {
+            commit('SET_LOADING', true)
+            const { data } = await api.getAll('banners')
+            commit('SET_ITEMS', data)
+        } catch (error) {
+            commit('SET_ERROR', error)
+        } finally {
+            commit('SET_LOADING', false)
         }
     },
-    actions: {
-        getItems({commit}){
-            return new Promise((resolve, reject)=>{
-                commit('SET_LOADING', true)
-                api.getAll('banners')
-                    .then(resp=>{
-                        commit('SET_ITEMS', resp.data)
-                        resolve(resp.data)
-                    })
-                    .catch(err=>{
-                        commit('SET_ERROR', false)
-                        reject(err)
-                    })
-                    .finally(()=>{
-                        commit('SET_LOADING', false)
-                    })
-            })
-        },
-        getItem({commit}, id){
-            return new Promise((resolve, reject)=>{
-                commit('SET_LOADING', true)
-                api.getOne('banners',id)
-                    .then(resp=>{
-                        commit('SET_ITEM', resp.data)
-                        resolve(resp.data)
-                    })
-                    .catch(err=>{
-                        commit('SET_ERROR', false)
-                        reject(err)
-                    })
-                    .finally(()=>{
-                        commit('SET_LOADING', false)
-                    })
-            })
-        },
-        createItem({commit}, item){
-            return new Promise((resolve, reject)=>{
-                commit('SET_LOADING', true)
-                api.post_('banners',item)
-                    .then(resp=>{
-                        resolve(resp)
-                    })
-                    .catch(err=>{
-                        reject(err)
-                    })
-                    .finally(()=>{
-                        commit('SET_LOADING', false)
-                    })
-            })
-        },
-        deleteItem({commit}, id){
-            return new Promise((resolve, reject)=>{
-                commit('SET_LOADING', true)
-                api.delete_('banners',id)
-                    .then(resp=>{
-                        resolve(resp)
-                    })
-                    .catch(err=>{
-                        reject(err)
-                    })
-                    .finally(()=>{
-                        commit('SET_LOADING', false)
-                    })
-            })
+    async getItem({commit}, id){
+        try {
+            commit('SET_LOADING', true)
+            const { data } = await api.getOne('banners',id)
+            commit('SET_ITEM', data)
+        } catch (error) {
+            commit('SET_ERROR', error)
+        } finally {
+            commit('SET_LOADING', false)
+        }
+    },
+    async createItem({commit}, item){
+        try {
+            commit('SET_LOADING', true)
+            await api.post_('banners',item)
+        } catch (error) {
+            commit('SET_ERROR', error)
+        } finally {
+            commit('SET_LOADING', false)
+        }
+    },
+    async deleteItem({commit}, id){
+        try {
+            commit('SET_LOADING', true)
+            await api.delete_('banners',id)
+        } catch (error) {
+            commit('SET_ERROR', error)
+        } finally {
+            commit('SET_LOADING', false)
         }
     }
+}
+
+export default {
+    namespaced: true,
+    state,
+    mutations,
+    actions
 }
   

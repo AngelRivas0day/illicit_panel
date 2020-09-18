@@ -98,31 +98,27 @@ export default {
             createGlass: 'createGlass',
             updateGlass: 'updateGlass'
         }),
-        create(){
-            // metodo que es llamado cuando se crea un lente
-            // sera controlado por un flag
-            this.createGlass(this.form)
-                .then(resp=>{
-                    this.$notify({
-                        verticalAlign: 'top',
-                        horizontalAlign: 'right',
-                        message: 'Lente creado con éxito',
-                        type: 'success'
-                    });
-                    this.showDesignEditor = true
-                })
-                .catch(err=>{
-                    console.log(err)
-                    this.showDesignEditor = false
-                    this.$notify({
-                        verticalAlign: 'top',
-                        horizontalAlign: 'right',
-                        message: 'El lente no ha sido creado debido a un error',
-                        type: 'warning'
-                    });
-                })
+        async create(){
+            try {
+                await this.createGlass(this.form)
+                this.$notify({
+                    verticalAlign: 'top',
+                    horizontalAlign: 'right',
+                    message: 'Lente creado con éxito',
+                    type: 'success'
+                });
+                this.showDesignEditor = true
+            } catch (error) {
+                this.$notify({
+                    verticalAlign: 'top',
+                    horizontalAlign: 'right',
+                    message: 'El lente no ha sido creado debido a un error',
+                    type: 'warning'
+                });
+                this.showDesignEditor = false
+            }
         },
-        update(){
+        async update(){
             const updatedGlass = {
                 name: this.form.name,
                 description: this.form.description,
@@ -130,27 +126,25 @@ export default {
                 brands: this.form.brands,
                 categories: this.form.categories
             }
-            this.updateGlass(updatedGlass)
-                .then(resp=>{
-                    this.$notify({
-                        verticalAlign: 'top',
-                        horizontalAlign: 'right',
-                        message: 'Lente actualizado con éxito',
-                        type: 'success'
-                    });
-                })
-                .catch(err=>{
-                    console.log(err)
-                    this.$notify({
-                        verticalAlign: 'top',
-                        horizontalAlign: 'right',
-                        message: 'El lente no se ha actualizado debido a un error',
-                        type: 'warning'
-                    });
-                })  
-                .finally(()=>{
-                    this.showDesignEditor = true
-                })
+            try {
+                await this.updateGlass(updatedGlass)
+                this.$notify({
+                    verticalAlign: 'top',
+                    horizontalAlign: 'right',
+                    message: 'Lente actualizado con éxito',
+                    type: 'success'
+                });    
+            } catch (error) {
+                console.log(errpr)
+                this.$notify({
+                    verticalAlign: 'top',
+                    horizontalAlign: 'right',
+                    message: 'El lente no se ha actualizado debido a un error',
+                    type: 'warning'
+                });
+            } finally {
+                this.showDesignEditor = true
+            }
         },
         onSubmit(e){
             e.preventDefault()

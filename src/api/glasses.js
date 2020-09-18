@@ -4,11 +4,12 @@ const base_url = 'http://localhost:3000/'
 const resource = 'glasses'
 const request_url = `${base_url}${resource}`
 
-function getGlasses(start, limit){
+function getGlasses(start, limit, searchPattern = null){
     const config = {
         params: {
             start,
-            limit
+            limit,
+            searchPattern
         }
     }
     return get(request_url, config)

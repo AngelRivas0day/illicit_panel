@@ -77,8 +77,7 @@
 
 <script>
 import DesignCard from './DesignCard'
-import { mapState } from 'vuex'
-import store from '@/store'
+import { mapState, mapActions } from 'vuex'
 
 export default {
     name: 'StyleEditor',
@@ -115,7 +114,10 @@ export default {
         urlPreview: []
     }),
     methods: {
-        addStyle(e){
+        ...mapActions('glasses',{
+            createGlassDesign: 'createGlassDesign'
+        }),
+        async addStyle(e){
             e.preventDefault()
             const formData = new FormData()
             formData.append('colorName', this.styleData.color.colorName)
@@ -127,21 +129,29 @@ export default {
             Array.from(this.selectedFile).forEach((element,i) => {
                 formData.append("mainImage", element)
             });
-            store.dispatch('glasses/createGlassDesign', formData, {root:true})
-                .then(resp=>{
-                    console.log(resp)
-                })
-                .catch(err=>{
-                    console.log(err)
-                })
-            this.styleData = {
-                color: {
-                    name: '',
-                    hex: ''
-                },
-                images: []
+            try {
+                await this.createGlassDesign(formData)
+                this.$notify({
+                    verticalAlign: 'top',
+                    horizontalAlign: 'right',
+                    message: 'El diseño ha sido creado con éxito',
+                    type: 'success'
+                });
+            } catch (error) {
+                console.log(error)
+                this.$notify({
+                    verticalAlign: 'top',
+                    horizontalAlign: 'right',
+                    message: 'El diseño no ha sido creado debido a un error',
+                    type: 'warning'
+                });
+            } finally {
+                this.styleData = {
+                    color: { name: '', hex: '' },
+                    images: []
+                }
+                this.urlPreviews = []
             }
-            this.urlPreviews = []
         },
         onFileChange(e){
             this.selectedFiles = e.target.files

@@ -7,6 +7,7 @@ import loading from './modules/loading'
 import glasses from './modules/glasses'
 import banners from './modules/banners'
 import pins from './modules/pins'
+import offers from './modules/offers'
 
 Vue.use(Vuex)
 
@@ -17,6 +18,7 @@ export default new Vuex.Store({
     loading,
     glasses,
     banners,
-    pins
+    pins,
+    offers
   }
 })

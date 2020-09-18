@@ -22,11 +22,11 @@
                             Agregar lente
                         </md-button>
                     </div>
-                    <!-- <div class="col-12">
-                        <el-input v-model="filters[0].value"></el-input>
-                    </div> -->
                     <div class="col-12 mt-4">
-                        <data-tables-server :filters="filters" :data="glasses" :pagination-props="{ pageSizes: [5, 10, 15] }">
+                        <el-input v-model="filters[0].value"></el-input>
+                    </div>
+                    <div class="col-12 mt-2">
+                        <data-tables-server :filters="filters" :loading="loading" :data="glasses" :pagination-props="{ pageSizes: [5, 10, 15] }" @query-change="loadData">
                             <el-table-column label="Imagen" min-width="60px">
                                 <template slot-scope="scope">
                                     <img :src="scope.row.designs.length > 0 ? scope.row.designs[0].mainImage : 'https://source.unsplash.com/200x200?empty,nothing'" class="table-image">
@@ -55,6 +55,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
+import { mapFields } from 'vuex-map-fields';
 import attemptDelete from '@/mixins/attemptDelete'
 import goTo from '@/mixins/goTo'
 import store from '@/store'
@@ -66,6 +67,10 @@ export default {
         ...mapState('glasses',{
             loading: 'isLoading',
             glasses: 'glasses'
+        }),
+        ...mapFields('glasses',{
+            searchPatter: 'searchPatter',
+            error: 'error'
         })
     },
     data: ()=>({
@@ -80,8 +85,13 @@ export default {
             'search_prop': 'name' // define search_prop for backend usage.
         }]
     }),
-    mounted(){
-        this.getData()
+    async mounted(){
+        try {
+            await this.getData()
+        } catch (error) {
+            console.log(error)
+            this.error = error
+        }
     },
     destroyed(){
         store.dispatch('loading/notLoading',null,{root:true})
@@ -91,26 +101,31 @@ export default {
             getData: 'getGlasses',
             delete: 'deleteGlass'
         }),
-        deleteGlass(){
-            this.delete(this.itemToDelete.id)
-                .then(resp=>{
-                    this.getData()
-                    this.$notify({
-                        verticalAlign: 'top',
-                        horizontalAlign: 'right',
-                        message: 'El lente ha sido eliminado con éxito',
-                        type: 'success'
-                    });
-                })
-                .catch(err=>{
-                    console.log(err)
-                    this.$notify({
-                        verticalAlign: 'top',
-                        horizontalAlign: 'right',
-                        message: 'El lente no ha sido eliminado debido a un error',
-                        type: 'warning'
-                    });
-                })
+        async deleteGlass(){
+            try {
+                await this.delete(this.itemToDelete.id)
+                this.$notify({
+                    verticalAlign: 'top',
+                    horizontalAlign: 'right',
+                    message: 'El lente ha sido eliminado con éxito',
+                    type: 'success'
+                });
+                await this.getData()
+            } catch (error) {
+                console.log(error)
+                this.$notify({
+                    verticalAlign: 'top',
+                    horizontalAlign: 'right',
+                    message: 'El lente no ha sido eliminado debido a un error',
+                    type: 'warning'
+                });
+            }
+        },
+        loadData(queryInfo){
+            queryInfo.type === 'filter'
+            this.searchPatter = queryInfo.filters[0].value
+            console.log(this.searchPatter)
+            this.getData()
         }
     }
 }

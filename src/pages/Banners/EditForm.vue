@@ -44,18 +44,10 @@
 
 <script>
 import store from '@/store'
-// import { mapState } from 'vuex'
+import { mapActions } from 'vuex'
 
 export default {
     name: 'EditForm',
-    mounted(){
-        if(this.$route.params.id){
-            this.getData()
-            this.isCreating = false
-        }else{
-            this.isCreating = true
-        }
-    },
     data: () => ({
         form: {
             image: '',
@@ -68,49 +60,35 @@ export default {
         selectedFile: []
     }),
     methods: {
-        getData(){
-            store.dispatch('banner/getItem', this.$route.params.id)
-                .catch(resp=>{
-                    this.form = resp
-                })
-                .catch(err=>{
-                    console.log(err)
-                })
-        },
-        onSubmit(e){
+        ...mapActions('banners', {
+            createItem: 'createItem'
+        }),
+        async onSubmit(e){
             e.preventDefault()
-            if(this.isCreating){
-                const formData = new FormData()
-                formData.append('title', this.form.title)
-                formData.append('buttonText', this.form.buttonText)
-                formData.append('buttonUrl', this.form.buttonUrl)
-                Array.from(this.selectedFile).forEach((element,i) => {
-                    formData.append("image", element)
+            const formData = new FormData()
+            formData.append('title', this.form.title)
+            formData.append('buttonText', this.form.buttonText)
+            formData.append('buttonUrl', this.form.buttonUrl)
+            Array.from(this.selectedFile).forEach((element,i) => {
+                formData.append("image", element)
+            });
+            try {
+                await this.createItem(formData)
+                this.$notify({
+                    verticalAlign: 'top',
+                    horizontalAlign: 'right',
+                    message: 'Banner creado con éxito',
+                    type: 'success'
                 });
-                store.dispatch('banners/createItem', formData, {root:true})
-                    .then(resp=>{
-                        console.log(resp)
-                            this.$notify({
-                            verticalAlign: 'top',
-                            horizontalAlign: 'right',
-                            message: 'Banner creado con éxito',
-                            type: 'success'
-                        });
-                    })
-                    .catch(err=>{
-                        console.log(err)
-                            this.$notify({
-                            verticalAlign: 'top',
-                            horizontalAlign: 'right',
-                            message: 'Banner no creado debido a un error',
-                            type: 'warning'
-                        });
-                    })
-                    .finally(()=>{
-                        this.$router.push({name: 'Banners'})
-                    })
-            }else{
-
+            } catch (error) {
+                this.$notify({
+                    verticalAlign: 'top',
+                    horizontalAlign: 'right',
+                    message: 'Banner no creado debido a un error',
+                    type: 'warning'
+                });
+            } finally {
+                this.$router.push({name: 'Banners'})
             }
         },
         handleChange(e){

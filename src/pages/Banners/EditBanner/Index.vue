@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import EditForm from './EditForm'
+import EditForm from '../EditForm'
 export default {
     name: 'EditBanner',
     components: { EditForm }

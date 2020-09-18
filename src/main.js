@@ -43,6 +43,8 @@ router.beforeEach((to, from, next)=>{
   }
 });
 
+Vue.prototype.$store = store
+
 /* eslint-disable no-new */
 new Vue({
   router,

@@ -49,8 +49,7 @@
 </template>
 
 <script>
-import store from '@/store'
-import {mapState} from 'vuex'
+import {mapState, mapActions} from 'vuex'
 
 export default {
     name: "DesignCard",
@@ -70,24 +69,26 @@ export default {
         showImages: false
     }),
     methods: {
-        deleteDesign() {
-            store.dispatch('glasses/deleteGlassDesign', {name: this.design.name}, {root:true})
-                .then(()=>{
-                    this.$notify({
-                        verticalAlign: 'top',
-                        horizontalAlign: 'right',
-                        message: 'El diseño ha sido eliminado, con éxito',
-                        type: 'success'
-                    });
-                })
-                .catch(err=>{
-                    this.$notify({
-                        verticalAlign: 'top',
-                        horizontalAlign: 'right',
-                        message: 'El diseño no ha sido eliminado debido a un error',
-                        type: 'warning'
-                    });
-                })
+        ...mapActions('glasses',{
+            deleteGlassDesign: 'deleteGlassDesign'
+        }),
+        async deleteDesign() {
+            try {
+                await this.deleteGlassDesign({name: this.design.name})
+                this.$notify({
+                    verticalAlign: 'top',
+                    horizontalAlign: 'right',
+                    message: 'El diseño ha sido eliminado, con éxito',
+                    type: 'success'
+                });
+            } catch (error) {
+                this.$notify({
+                    verticalAlign: 'top',
+                    horizontalAlign: 'right',
+                    message: 'El diseño no ha sido eliminado debido a un error',
+                    type: 'warning'
+                });
+            }
         },
         onCancel(){
             this.isDeleting = false
